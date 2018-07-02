@@ -25,15 +25,20 @@ namespace RestfulASPNetCore.Web.Controllers
 
             var result = Mapper.Map<IEnumerable<Dtos.Author>>(authors);
 
-            return new JsonResult(result);
+            return Ok(result);
         }
 
         [HttpGet("{id}")]
         public IActionResult GetAuthor(Guid id)
         {
             var author = _repo.GetAuthor(id);
+            if (author==null)
+            {
+                return NotFound();
+            }
+
             var result = Mapper.Map<Dtos.Author>(author);
-            return new JsonResult(result);
+            return Ok(result);
         }
     }
 }
