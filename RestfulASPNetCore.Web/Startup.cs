@@ -6,6 +6,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using RestfulASPNetCore.Web.Entities;
 using RestfulASPNetCore.Web.Services;
+using RestfulASPNetCore.Web.Helpers;
 
 namespace RestfulASPNetCore.Web
 {
@@ -40,6 +41,15 @@ namespace RestfulASPNetCore.Web
             }
 
             app.UseHttpsRedirection();
+
+
+            AutoMapper.Mapper.Initialize(cfg =>
+            {
+                cfg.CreateMap<Author, Dtos.Author>()
+                    .ForMember(dest => dest.Name, opt => opt.MapFrom(src => $"{src.FirstName} {src.LastName}"))
+                    .ForMember(dest => dest.Age, opt => opt.MapFrom(src =>
+                        src.DateOfBirth.GetCurrentAge()));
+            });
 
             libraryContext.EnsureSeedDataForContext();
 

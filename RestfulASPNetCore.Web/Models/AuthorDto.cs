@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace RestfulASPNetCore.Web.Models
+namespace RestfulASPNetCore.Web.Dtos
 {
-    public class AuthorDto
+    public class Author
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
