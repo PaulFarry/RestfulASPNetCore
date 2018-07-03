@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using RestfulASPNetCore.Web.Entities;
 using RestfulASPNetCore.Web.Services;
 using RestfulASPNetCore.Web.Helpers;
+using Microsoft.AspNetCore.Mvc.Formatters;
 
 namespace RestfulASPNetCore.Web
 {
@@ -22,7 +23,14 @@ namespace RestfulASPNetCore.Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddMvc(
+                setup =>
+                {
+                    setup.ReturnHttpNotAcceptable = true;
+                    setup.OutputFormatters.Add(new XmlDataContractSerializerOutputFormatter());
+                }
+            )
+            .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             var connectionString = Configuration["connectionStrings:libraryDBConnectionString"];
             services.AddDbContext<LibraryContext>(o => o.UseSqlServer(connectionString));
             services.AddScoped<ILibraryRepository, LibraryRepository>();
@@ -49,6 +57,8 @@ namespace RestfulASPNetCore.Web
                     .ForMember(dest => dest.Name, opt => opt.MapFrom(src => $"{src.FirstName} {src.LastName}"))
                     .ForMember(dest => dest.Age, opt => opt.MapFrom(src =>
                         src.DateOfBirth.GetCurrentAge()));
+
+                cfg.CreateMap<Book, Dtos.Book>();
             });
 
             libraryContext.EnsureSeedDataForContext();
