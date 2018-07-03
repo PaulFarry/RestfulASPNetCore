@@ -1,13 +1,14 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using RestfulASPNetCore.Web.Dtos;
 using RestfulASPNetCore.Web.Entities;
-using RestfulASPNetCore.Web.Services;
 using RestfulASPNetCore.Web.Helpers;
-using Microsoft.AspNetCore.Mvc.Formatters;
+using RestfulASPNetCore.Web.Services;
 
 namespace RestfulASPNetCore.Web
 {
@@ -53,12 +54,14 @@ namespace RestfulASPNetCore.Web
 
             AutoMapper.Mapper.Initialize(cfg =>
             {
-                cfg.CreateMap<Author, Dtos.Author>()
+                cfg.CreateMap<Entities.Author, Dtos.Author>()
                     .ForMember(dest => dest.Name, opt => opt.MapFrom(src => $"{src.FirstName} {src.LastName}"))
                     .ForMember(dest => dest.Age, opt => opt.MapFrom(src =>
                         src.DateOfBirth.GetCurrentAge()));
 
-                cfg.CreateMap<Book, Dtos.Book>();
+                cfg.CreateMap<Entities.Book, Dtos.Book>();
+
+                cfg.CreateMap<CreateAuthor, Entities.Author>();
             });
 
             libraryContext.EnsureSeedDataForContext();
