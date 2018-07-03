@@ -19,6 +19,7 @@ namespace RestfulASPNetCore.Web.Services
         void UpdateBookForAuthor(Book book);
         void DeleteBook(Book book);
         bool Save();
+        Book GetBook(Guid bookId);
     }
 
 }

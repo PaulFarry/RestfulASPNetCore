@@ -85,7 +85,13 @@ namespace RestfulASPNetCore.Web.Services
         public Book GetBookForAuthor(Guid authorId, Guid bookId)
         {
             return _context.Books
-              .Where(b => b.AuthorId == authorId && b.Id == bookId).FirstOrDefault();
+              .FirstOrDefault(b => b.AuthorId == authorId && b.Id == bookId);
+        }
+
+
+        public Book GetBook(Guid bookId)
+        {
+            return _context.Books.FirstOrDefault(x => x.Id == bookId);
         }
 
         public IEnumerable<Book> GetBooksForAuthor(Guid authorId)
