@@ -1,9 +1,12 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
 using RestfulASPNetCore.Web.Dtos;
+using RestfulASPNetCore.Web.Helpers;
 using RestfulASPNetCore.Web.Services;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace RestfulASPNetCore.Web.Controllers
 {
@@ -35,7 +38,30 @@ namespace RestfulASPNetCore.Web.Controllers
                 throw new Exception("Creating authors failed to save");
             }
 
-            return Ok();
+            var authorsCollectionToResult = Mapper.Map<IEnumerable<Author>>(authorEntities);
+            var idsAsString = string.Join(",", authorsCollectionToResult.Select(x => x.Id));
+
+            return CreatedAtRoute(nameof(GetAuthorCollection), new { ids = idsAsString }, authorsCollectionToResult);
+        }
+        [HttpGet("({ids})", Name = nameof(GetAuthorCollection))]
+        public IActionResult GetAuthorCollection(
+        [ModelBinder(BinderType = typeof(ArrayModelBinder))] IEnumerable<Guid> ids)
+        {
+            if (ids == null)
+            {
+                return BadRequest();
+            }
+
+            var authors = repo.GetAuthors(ids);
+
+            if (authors.Count() != ids.Count())
+            {
+                return NotFound();
+            }
+            var authorsToReturn = Mapper.Map<IEnumerable<Author>>(authors);
+
+            return Ok(authorsToReturn);
+
         }
     }
 }
