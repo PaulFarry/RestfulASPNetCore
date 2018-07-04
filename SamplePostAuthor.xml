@@ -1,0 +1,9 @@
+﻿<CreateAuthor xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.datacontract.org/2004/07/RestfulASPNetCore.Web.Dtos">
+        <DateOfBirth xmlns:d3p1="http://schemas.datacontract.org/2004/07/System">
+            <d3p1:DateTime>1948-03-03T00:00:00Z</d3p1:DateTime>
+            <d3p1:OffsetMinutes>0</d3p1:OffsetMinutes>
+        </DateOfBirth>
+        <Firstname>James</Firstname>
+        <Genre>Thriller</Genre>
+        <Lastname>Ellroy</Lastname>
+</CreateAuthor>

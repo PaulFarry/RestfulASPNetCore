@@ -29,6 +29,8 @@ namespace RestfulASPNetCore.Web
                 {
                     setup.ReturnHttpNotAcceptable = true;
                     setup.OutputFormatters.Add(new XmlDataContractSerializerOutputFormatter());
+                    setup.InputFormatters.Add(new XmlDataContractSerializerInputFormatter(new MvcOptions { }));
+                    //setup.InputFormatters.Add(new XmlDataContractSerializerInputFormatter());
                 }
             )
             .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
