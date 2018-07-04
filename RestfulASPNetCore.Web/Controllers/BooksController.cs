@@ -34,7 +34,7 @@ namespace RestfulASPNetCore.Web.Controllers
             return Ok(results);
         }
 
-        [HttpGet("{bookid}/author/{authorid}")]
+        [HttpGet("{bookid}/author/{authorid}", Name = nameof(GetBookForAuthor))]
         public IActionResult GetBookForAuthor(Guid authorId, Guid bookId)
         {
             if (!_libraryRepository.AuthorExists(authorId))
@@ -50,6 +50,34 @@ namespace RestfulASPNetCore.Web.Controllers
             var results = Mapper.Map<Book>(book);
             return Ok(results);
         }
+
+        [HttpPost("author/{authorid}")]
+        public IActionResult CreateBookForAuthor(Guid authorId, [FromBody] CreateBook book)
+        {
+            if (book == null)
+            {
+                return BadRequest();
+            }
+
+            if (!_libraryRepository.AuthorExists(authorId))
+            {
+                return NotFound();
+            }
+
+            var newBook = Mapper.Map<Entities.Book>(book);
+            _libraryRepository.AddBookForAuthor(authorId, newBook);
+
+            if (!_libraryRepository.Save())
+            {
+                throw new Exception($"Couldn't save new book for Author {authorId}");
+            }
+
+            var bookToReturn = Mapper.Map<Book>(newBook);
+
+            return CreatedAtRoute(nameof(GetBookForAuthor), new { authorId, bookId = newBook.Id }, bookToReturn);
+
+        }
+
 
         [HttpGet("{bookid}")]
         public IActionResult GetBook(Guid bookId)
