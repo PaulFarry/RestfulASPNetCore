@@ -59,5 +59,17 @@ namespace RestfulASPNetCore.Web.Controllers
             var createdAuthor = Mapper.Map<Dtos.Author>(newAuthor);
             return CreatedAtRoute(nameof(GetAuthor), new { id = newAuthor.Id }, createdAuthor);
         }
+
+
+        [HttpPost("{id}")]
+
+        public IActionResult BlockAuthorCreation(Guid id)
+        {
+            if (_repo.AuthorExists(id))
+            {
+                return Conflict();
+            }
+            return NotFound();
+        }
     }
 }
