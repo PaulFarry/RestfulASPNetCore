@@ -34,14 +34,14 @@ namespace RestfulASPNetCore.Web.Controllers
             return Ok(results);
         }
 
-        [HttpGet("{bookid}/author/{authorid}", Name = nameof(GetBookForAuthor))]
-        public IActionResult GetBookForAuthor(Guid authorId, Guid bookId)
+        [HttpGet("{id}/author/{authorid}", Name = nameof(GetBookForAuthor))]
+        public IActionResult GetBookForAuthor(Guid authorId, Guid id)
         {
             if (!_libraryRepository.AuthorExists(authorId))
             {
                 return NotFound();
             }
-            var book = _libraryRepository.GetBookForAuthor(authorId, bookId);
+            var book = _libraryRepository.GetBookForAuthor(authorId, id);
             if (book == null)
             {
                 return NotFound();
@@ -74,14 +74,14 @@ namespace RestfulASPNetCore.Web.Controllers
 
             var bookToReturn = Mapper.Map<Book>(newBook);
 
-            return CreatedAtRoute(nameof(GetBookForAuthor), new { authorId, bookId = newBook.Id }, bookToReturn);
+            return CreatedAtRoute(nameof(GetBookForAuthor), new { authorId, id = newBook.Id }, bookToReturn);
 
         }
 
-        [HttpDelete("{bookid}/author/{authorid}", Name = nameof(DeleteBookForAuthor))]
-        public IActionResult DeleteBookForAuthor(Guid authorId, Guid bookId)
+        [HttpDelete("{id}/author/{authorid}", Name = nameof(DeleteBookForAuthor))]
+        public IActionResult DeleteBookForAuthor(Guid authorId, Guid id)
         {
-            var book = _libraryRepository.GetBookForAuthor(authorId, bookId);
+            var book = _libraryRepository.GetBookForAuthor(authorId, id);
             if (book == null)
             {
                 return NotFound();
@@ -89,7 +89,7 @@ namespace RestfulASPNetCore.Web.Controllers
             _libraryRepository.DeleteBook(book);
             if (!_libraryRepository.Save())
             {
-                throw new Exception($"Failed to Delete book {bookId} for author {authorId}.");
+                throw new Exception($"Failed to Delete book {id} for author {authorId}.");
             }
 
             return NoContent();
@@ -108,6 +108,7 @@ namespace RestfulASPNetCore.Web.Controllers
             var results = Mapper.Map<Book>(book);
             return Ok(results);
         }
+
         [HttpPut("{id}/author/{authorid}", Name = nameof(UpdateBookForAuthor))]
         public IActionResult UpdateBookForAuthor(Guid id, Guid authorId,
         [FromBody] UpdateBook book)
@@ -120,8 +121,20 @@ namespace RestfulASPNetCore.Web.Controllers
             var existingBook = _libraryRepository.GetBookForAuthor(authorId, id);
             if (existingBook == null)
             {
-                return NotFound();
+                var bookToAdd = Mapper.Map<Entities.Book>(book);
+                bookToAdd.Id = id;
+                _libraryRepository.AddBookForAuthor(authorId, bookToAdd);
+
+                if (!_libraryRepository.Save())
+                {
+                    throw new Exception($"Upserting couldn't save the book {id}");
+                }
+                var bookToReturn = Mapper.Map<Book>(bookToAdd);
+
+                return CreatedAtRoute(nameof(GetBookForAuthor), new { authorId, id = id }, bookToReturn);
             }
+
+
             Mapper.Map(book, existingBook);
             _libraryRepository.UpdateBookForAuthor(existingBook);
 
