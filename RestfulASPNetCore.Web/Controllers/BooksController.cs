@@ -78,6 +78,23 @@ namespace RestfulASPNetCore.Web.Controllers
 
         }
 
+        [HttpDelete("{bookid}/author/{authorid}", Name = nameof(DeleteBookForAuthor))]
+        public IActionResult DeleteBookForAuthor(Guid authorId, Guid bookId)
+        {
+            var book = _libraryRepository.GetBookForAuthor(authorId, bookId);
+            if (book == null)
+            {
+                return NotFound();
+            }
+            _libraryRepository.DeleteBook(book);
+            if (!_libraryRepository.Save())
+            {
+                throw new Exception($"Failed to Delete book {bookId} for author {authorId}.");
+            }
+
+            return NoContent();
+
+        }
 
         [HttpGet("{bookid}")]
         public IActionResult GetBook(Guid bookId)
