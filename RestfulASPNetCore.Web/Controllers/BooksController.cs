@@ -108,6 +108,30 @@ namespace RestfulASPNetCore.Web.Controllers
             var results = Mapper.Map<Book>(book);
             return Ok(results);
         }
+        [HttpPut("{id}/author/{authorid}", Name = nameof(UpdateBookForAuthor))]
+        public IActionResult UpdateBookForAuthor(Guid id, Guid authorId,
+        [FromBody] UpdateBook book)
+        {
+            if (book == null)
+            {
+                return BadRequest();
+            }
+
+            var existingBook = _libraryRepository.GetBookForAuthor(authorId, id);
+            if (existingBook == null)
+            {
+                return NotFound();
+            }
+            Mapper.Map(book, existingBook);
+            _libraryRepository.UpdateBookForAuthor(existingBook);
+
+            if (!_libraryRepository.Save())
+            {
+                throw new Exception($"Cound't save the updated book {id}");
+            }
+
+            return NoContent();
+        }
 
     }
 }

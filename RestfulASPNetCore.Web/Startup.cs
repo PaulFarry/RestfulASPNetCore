@@ -66,6 +66,7 @@ namespace RestfulASPNetCore.Web
                 cfg.CreateMap<CreateAuthor, Entities.Author>();
 
                 cfg.CreateMap<CreateBook, Entities.Book>();
+                cfg.CreateMap<UpdateBook, Entities.Book>();
             });
 
             libraryContext.EnsureSeedDataForContext();
