@@ -71,5 +71,24 @@ namespace RestfulASPNetCore.Web.Controllers
             }
             return NotFound();
         }
+        [HttpDelete("{id}")]
+        public IActionResult DeleteAuthor(Guid id)
+        {
+            var author = _repo.GetAuthor(id);
+            if (author == null)
+            {
+                return NotFound();
+            }
+            _repo.DeleteAuthor(author);
+            if (!_repo.Save())
+            {
+                throw new Exception($"Failed to delete author {id}");
+            }
+
+            return NoContent();
+
+
+
+        }
     }
 }
