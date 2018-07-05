@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using AutoMapper;
-using Microsoft.AspNetCore.Http;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using RestfulASPNetCore.Web.Dtos;
 using RestfulASPNetCore.Web.Services;
+using System;
+using System.Collections.Generic;
 
 namespace RestfulASPNetCore.Web.Controllers
 {
@@ -141,6 +139,36 @@ namespace RestfulASPNetCore.Web.Controllers
             if (!_libraryRepository.Save())
             {
                 throw new Exception($"Cound't save the updated book {id}");
+            }
+
+            return NoContent();
+        }
+
+        [HttpPatch("{id}/author/{authorId}")]
+        public IActionResult PartiallyUpdateBookForAuthor(Guid id, Guid authorId, [FromBody] JsonPatchDocument<UpdateBook> patchDocument)
+        {
+            if (patchDocument == null)
+            {
+                return BadRequest();
+            }
+
+            var existingBook = _libraryRepository.GetBookForAuthor(authorId, id);
+            if (existingBook==null)
+            {
+                return NotFound();
+            }
+
+            var bookToPatch = Mapper.Map<UpdateBook>(existingBook);
+            patchDocument.ApplyTo(bookToPatch);
+
+            //Add Validation
+
+            Mapper.Map(bookToPatch, existingBook);
+
+            _libraryRepository.UpdateBookForAuthor(existingBook);
+            if (!_libraryRepository.Save())
+            {
+                throw new Exception($"Patching book {id} for author {authorId} failed to save");
             }
 
             return NoContent();
