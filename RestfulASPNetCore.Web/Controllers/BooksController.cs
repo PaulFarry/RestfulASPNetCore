@@ -129,7 +129,7 @@ namespace RestfulASPNetCore.Web.Controllers
                 }
                 var bookToReturn = Mapper.Map<Book>(bookToAdd);
 
-                return CreatedAtRoute(nameof(GetBookForAuthor), new { authorId, id = id }, bookToReturn);
+                return CreatedAtRoute(nameof(GetBookForAuthor), new { authorId, id }, bookToReturn);
             }
 
 
@@ -155,7 +155,22 @@ namespace RestfulASPNetCore.Web.Controllers
             var existingBook = _libraryRepository.GetBookForAuthor(authorId, id);
             if (existingBook==null)
             {
-                return NotFound();
+                var bookDto = new UpdateBook();
+                patchDocument.ApplyTo(bookDto);
+
+
+                var bookToAdd = Mapper.Map<Entities.Book>(bookDto);
+                bookToAdd.Id = id;
+
+                _libraryRepository.AddBookForAuthor(authorId, bookToAdd);
+
+                if (!_libraryRepository.Save())
+                {
+                    throw new Exception($"Upserting couldn't save the book {id}");
+                }
+                var bookToReturn = Mapper.Map<Book>(bookToAdd);
+
+                return CreatedAtRoute(nameof(GetBookForAuthor), new { authorId, id }, bookToReturn);
             }
 
             var bookToPatch = Mapper.Map<UpdateBook>(existingBook);
