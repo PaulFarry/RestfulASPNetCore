@@ -57,6 +57,10 @@ namespace RestfulASPNetCore.Web.Controllers
                 return BadRequest();
             }
 
+            if (book.Description == book.Title)
+            {
+                ModelState.AddModelError(nameof(CreateBook), "The description should differ from the title.");
+            }
             if (!ModelState.IsValid)
             {
                 return UnprocessableEntity(ModelState);
