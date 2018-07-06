@@ -57,6 +57,11 @@ namespace RestfulASPNetCore.Web.Controllers
                 return BadRequest();
             }
 
+            if (!ModelState.IsValid)
+            {
+                return UnprocessableEntity(ModelState);
+            }
+
             if (!_libraryRepository.AuthorExists(authorId))
             {
                 return NotFound();
@@ -153,7 +158,7 @@ namespace RestfulASPNetCore.Web.Controllers
             }
 
             var existingBook = _libraryRepository.GetBookForAuthor(authorId, id);
-            if (existingBook==null)
+            if (existingBook == null)
             {
                 var bookDto = new UpdateBook();
                 patchDocument.ApplyTo(bookDto);
