@@ -176,9 +176,20 @@ namespace RestfulASPNetCore.Web.Controllers
             if (existingBook == null)
             {
                 var bookDto = new UpdateBook();
-                patchDocument.ApplyTo(bookDto);
+                patchDocument.ApplyTo(bookDto, ModelState);
 
 
+                TryValidateModel(bookDto);
+
+                if (ModelState.IsValid && bookDto.Description == bookDto.Title)
+                {
+                    ModelState.AddModelError(nameof(CreateBook), "The description should differ from the title.");
+                }
+
+                if (!ModelState.IsValid)
+                {
+                    return UnprocessableEntity(ModelState);
+                }
                 var bookToAdd = Mapper.Map<Entities.Book>(bookDto);
                 bookToAdd.Id = id;
 
@@ -194,9 +205,20 @@ namespace RestfulASPNetCore.Web.Controllers
             }
 
             var bookToPatch = Mapper.Map<UpdateBook>(existingBook);
-            patchDocument.ApplyTo(bookToPatch);
 
-            //Add Validation
+            patchDocument.ApplyTo(bookToPatch, ModelState);
+
+            TryValidateModel(bookToPatch);
+            
+            if (ModelState.IsValid && bookToPatch.Description == bookToPatch.Title)
+            {
+                ModelState.AddModelError(nameof(CreateBook), "The description should differ from the title.");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return UnprocessableEntity(ModelState);
+            }
 
             Mapper.Map(bookToPatch, existingBook);
 
