@@ -125,6 +125,17 @@ namespace RestfulASPNetCore.Web.Controllers
                 return BadRequest();
             }
 
+            if (book.Description == book.Title)
+            {
+                ModelState.AddModelError(nameof(UpdateBook), "The description should differ from the title.");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return UnprocessableEntity(ModelState);
+            }
+
+
             var existingBook = _libraryRepository.GetBookForAuthor(authorId, id);
             if (existingBook == null)
             {

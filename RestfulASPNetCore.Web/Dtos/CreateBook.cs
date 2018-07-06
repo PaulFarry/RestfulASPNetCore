@@ -2,14 +2,8 @@
 
 namespace RestfulASPNetCore.Web.Dtos
 {
-    public class CreateBook
+    public class CreateBook : ManipulateBook
     {
-        [Required()]
-        [MaxLength(100)]
-        public string Title { get; set; }
-
-        [MaxLength(500)]
-        public string Description { get; set; }
 
     }
 }

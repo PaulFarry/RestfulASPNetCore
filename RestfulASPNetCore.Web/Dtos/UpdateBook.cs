@@ -1,9 +1,15 @@
-﻿namespace RestfulASPNetCore.Web.Dtos
-{
-    public class UpdateBook
-    {
-        public string Title { get; set; }
+﻿using System.ComponentModel.DataAnnotations;
 
-        public string Description { get; set; }
+namespace RestfulASPNetCore.Web.Dtos
+{
+    public class UpdateBook : ManipulateBook
+    {
+        [Required()]
+        public override string Description
+        {
+            get => base.Description;
+            set => base.Description = value;
+        }
+
     }
 }
