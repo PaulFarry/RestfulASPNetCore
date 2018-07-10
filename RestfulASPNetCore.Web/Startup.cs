@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Formatters;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -40,6 +42,14 @@ namespace RestfulASPNetCore.Web
             var connectionString = Configuration["connectionStrings:libraryDBConnectionString"];
             services.AddDbContext<LibraryContext>(o => o.UseSqlServer(connectionString));
             services.AddScoped<ILibraryRepository, LibraryRepository>();
+            services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
+            services.AddScoped<IUrlHelper, UrlHelper>(imp =>
+               {
+                   var actionContext = imp.GetService<IActionContextAccessor>().ActionContext;
+                   return new UrlHelper(actionContext);
+               }
+            );
+
 
         }
 

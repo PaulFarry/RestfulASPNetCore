@@ -13,20 +13,67 @@ namespace RestfulASPNetCore.Web.Controllers
     public class AuthorsController : ControllerBase
     {
         private ILibraryRepository _repo;
+        private IUrlHelper _urlHelper;
 
-        public AuthorsController(ILibraryRepository repo)
+        public AuthorsController(ILibraryRepository repo, IUrlHelper urlHelper)
         {
             _repo = repo;
+            _urlHelper = urlHelper;
         }
 
-        [HttpGet()]
+        [HttpGet(Name = nameof(GetAuthors))]
         public IActionResult GetAuthors([FromQuery]AuthorsResourceParameters parameters)
         {
             var authors = _repo.GetAuthors(parameters);
 
+            var prev = authors.HasPrevious ? CreateAuthorsResourceUri(parameters, ResourceUriType.Previous) : null;
+            var next = authors.HasNext ? CreateAuthorsResourceUri(parameters, ResourceUriType.Next) : null;
+
+            var pagination = new Pagination()
+            {
+                NextPageLink = next,
+                PreviousPageLink = prev,
+                TotalCount = authors.TotalCount,
+                PageSize = authors.PageSize,
+                CurrentPage = authors.CurrentPage,
+                TotalPages = authors.TotalPages,
+            };
+
+            Pagination.AddHeader(Response, pagination);
+
+
             var result = Mapper.Map<IEnumerable<Dtos.Author>>(authors);
 
             return Ok(result);
+        }
+
+        private string CreateAuthorsResourceUri(
+        AuthorsResourceParameters parameters, ResourceUriType type)
+        {
+            switch (type)
+            {
+                case ResourceUriType.Previous:
+                    return _urlHelper.Link(nameof(GetAuthors),
+                        new
+                        {
+                            pageNumber = parameters.PageNumber - 1,
+                            pageSize = parameters.PageSize
+                        });
+                case ResourceUriType.Next:
+                    return _urlHelper.Link(nameof(GetAuthors),
+                        new
+                        {
+                            pageNumber = parameters.PageNumber + 1,
+                            pageSize = parameters.PageSize
+                        });
+                default:
+                    return _urlHelper.Link(nameof(GetAuthors),
+                        new
+                        {
+                            pageNumber = parameters.PageNumber,
+                            pageSize = parameters.PageSize
+                        });
+            }
         }
 
         [HttpGet("{id}", Name = nameof(GetAuthor))]

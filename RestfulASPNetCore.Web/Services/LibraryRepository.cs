@@ -65,13 +65,11 @@ namespace RestfulASPNetCore.Web.Services
             return _context.Authors.FirstOrDefault(a => a.Id == authorId);
         }
 
-        public IEnumerable<Author> GetAuthors(AuthorsResourceParameters parameters)
+        public PagedList<Author> GetAuthors(AuthorsResourceParameters parameters)
         {
-            return _context.Authors
-            .OrderBy(a => a.FirstName)
-            .ThenBy(a => a.LastName)
-            .Skip(parameters.PageSize * (parameters.PageNumber - 1))
-            .Take(parameters.PageSize);
+            var collectionBeforePaging = _context.Authors.OrderBy(a => a.FirstName).ThenBy(a => a.LastName);
+
+            return PagedList<Author>.Create(collectionBeforePaging, parameters.PageNumber, parameters.PageSize);
         }
 
         public IEnumerable<Author> GetAuthors(IEnumerable<Guid> authorIds)

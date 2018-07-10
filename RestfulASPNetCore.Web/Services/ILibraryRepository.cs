@@ -7,7 +7,7 @@ namespace RestfulASPNetCore.Web.Services
 {
     public interface ILibraryRepository
     {
-        IEnumerable<Author> GetAuthors(AuthorsResourceParameters parameters);
+        PagedList<Author> GetAuthors(AuthorsResourceParameters parameters);
         Author GetAuthor(Guid authorId);
         IEnumerable<Author> GetAuthors(IEnumerable<Guid> authorIds);
         void AddAuthor(Author author);
