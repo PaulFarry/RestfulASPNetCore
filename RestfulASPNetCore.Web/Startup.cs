@@ -6,10 +6,12 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using NLog.Extensions.Logging;
 using RestfulASPNetCore.Web.Dtos;
 using RestfulASPNetCore.Web.Entities;
 using RestfulASPNetCore.Web.Helpers;
 using RestfulASPNetCore.Web.Services;
+
 
 namespace RestfulASPNetCore.Web
 {
@@ -46,6 +48,11 @@ namespace RestfulASPNetCore.Web
         {
             loggerFactory.AddConsole();
             loggerFactory.AddDebug(LogLevel.Trace);
+
+            //.Net core 1.1 approach
+            //loggerFactory.AddProvider(new NLog.Extensions.Logging.NLogLoggerProvider());
+            //loggerFactory.AddNLog();
+
 
             if (env.IsDevelopment())
             {

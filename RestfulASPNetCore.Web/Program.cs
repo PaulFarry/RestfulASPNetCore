@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
+using NLog.Web;
 
 namespace RestfulASPNetCore.Web
 {
@@ -24,6 +25,7 @@ namespace RestfulASPNetCore.Web
                     config.AddEnvironmentVariables();
                 }
             )
+            .UseNLog()
             .UseStartup<Startup>();
     }
 }
