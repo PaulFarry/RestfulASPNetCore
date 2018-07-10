@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using RestfulASPNetCore.Web.Dtos;
 using RestfulASPNetCore.Web.Services;
 using System;
@@ -13,10 +14,14 @@ namespace RestfulASPNetCore.Web.Controllers
     public class BooksController : ControllerBase
     {
         private ILibraryRepository _libraryRepository;
-        public BooksController(ILibraryRepository repository)
+        private ILogger<BooksController> _logger;
+
+        public BooksController(ILibraryRepository repository, ILogger<BooksController> logger)
         {
             _libraryRepository = repository;
+            _logger = logger;
         }
+
 
         [HttpGet("author/{authorid}")]
         public IActionResult GetBooksForAuthor(Guid authorId)
@@ -98,6 +103,8 @@ namespace RestfulASPNetCore.Web.Controllers
             {
                 throw new Exception($"Failed to Delete book {id} for author {authorId}.");
             }
+
+            _logger.LogInformation(100, $"Deleted book {id} for Author {authorId}");
 
             return NoContent();
 
