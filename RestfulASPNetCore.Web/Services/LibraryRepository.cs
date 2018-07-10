@@ -1,4 +1,5 @@
 ﻿using RestfulASPNetCore.Web.Entities;
+using RestfulASPNetCore.Web.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -64,9 +65,13 @@ namespace RestfulASPNetCore.Web.Services
             return _context.Authors.FirstOrDefault(a => a.Id == authorId);
         }
 
-        public IEnumerable<Author> GetAuthors()
+        public IEnumerable<Author> GetAuthors(AuthorsResourceParameters parameters)
         {
-            return _context.Authors.OrderBy(a => a.FirstName).ThenBy(a => a.LastName);
+            return _context.Authors
+            .OrderBy(a => a.FirstName)
+            .ThenBy(a => a.LastName)
+            .Skip(parameters.PageSize * (parameters.PageNumber - 1))
+            .Take(parameters.PageSize);
         }
 
         public IEnumerable<Author> GetAuthors(IEnumerable<Guid> authorIds)

@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using RestfulASPNetCore.Web.Dtos;
+using RestfulASPNetCore.Web.Helpers;
 using RestfulASPNetCore.Web.Services;
 using System;
 using System.Collections.Generic;
@@ -11,8 +12,6 @@ namespace RestfulASPNetCore.Web.Controllers
     [ApiController]
     public class AuthorsController : ControllerBase
     {
-        const int maxPageSize = 20;
-
         private ILibraryRepository _repo;
 
         public AuthorsController(ILibraryRepository repo)
@@ -21,13 +20,9 @@ namespace RestfulASPNetCore.Web.Controllers
         }
 
         [HttpGet()]
-        public IActionResult GetAuthors(
-                [FromQuery]int pageNumber = 1,
-                [FromQuery]int pageSize = 10)
+        public IActionResult GetAuthors([FromQuery]AuthorsResourceParameters parameters)
         {
-            pageSize = (pageSize > maxPageSize) ? maxPageSize : pageSize;
-
-            var authors = _repo.GetAuthors();
+            var authors = _repo.GetAuthors(parameters);
 
             var result = Mapper.Map<IEnumerable<Dtos.Author>>(authors);
 

@@ -1,4 +1,5 @@
 ﻿using RestfulASPNetCore.Web.Entities;
+using RestfulASPNetCore.Web.Helpers;
 using System;
 using System.Collections.Generic;
 
@@ -6,7 +7,7 @@ namespace RestfulASPNetCore.Web.Services
 {
     public interface ILibraryRepository
     {
-        IEnumerable<Author> GetAuthors();
+        IEnumerable<Author> GetAuthors(AuthorsResourceParameters parameters);
         Author GetAuthor(Guid authorId);
         IEnumerable<Author> GetAuthors(IEnumerable<Guid> authorIds);
         void AddAuthor(Author author);
