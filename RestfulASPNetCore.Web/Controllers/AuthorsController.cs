@@ -11,6 +11,7 @@ namespace RestfulASPNetCore.Web.Controllers
     [ApiController]
     public class AuthorsController : ControllerBase
     {
+        const int maxPageSize = 20;
 
         private ILibraryRepository _repo;
 
@@ -20,8 +21,12 @@ namespace RestfulASPNetCore.Web.Controllers
         }
 
         [HttpGet()]
-        public IActionResult GetAuthors()
+        public IActionResult GetAuthors(
+                [FromQuery]int pageNumber = 1,
+                [FromQuery]int pageSize = 10)
         {
+            pageSize = (pageSize > maxPageSize) ? maxPageSize : pageSize;
+
             var authors = _repo.GetAuthors();
 
             var result = Mapper.Map<IEnumerable<Dtos.Author>>(authors);
