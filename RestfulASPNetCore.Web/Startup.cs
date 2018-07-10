@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using RestfulASPNetCore.Web.Dtos;
 using RestfulASPNetCore.Web.Entities;
 using RestfulASPNetCore.Web.Helpers;
@@ -37,11 +38,15 @@ namespace RestfulASPNetCore.Web
             var connectionString = Configuration["connectionStrings:libraryDBConnectionString"];
             services.AddDbContext<LibraryContext>(o => o.UseSqlServer(connectionString));
             services.AddScoped<ILibraryRepository, LibraryRepository>();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, LibraryContext libraryContext)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, LibraryContext libraryContext, ILoggerFactory loggerFactory)
         {
+            loggerFactory.AddConsole();
+            loggerFactory.AddDebug(LogLevel.Trace);
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
