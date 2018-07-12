@@ -47,6 +47,7 @@ namespace RestfulASPNetCore.Web.Controllers
             return Ok(result);
         }
 
+
         private string CreateAuthorsResourceUri(
         AuthorsResourceParameters parameters, ResourceUriType type)
         {
@@ -56,6 +57,7 @@ namespace RestfulASPNetCore.Web.Controllers
                     return _urlHelper.Link(nameof(GetAuthors),
                         new
                         {
+                            searchQuery = parameters.SearchQuery,
                             genre = parameters.Genre,
                             pageNumber = parameters.PageNumber - 1,
                             pageSize = parameters.PageSize
@@ -64,6 +66,7 @@ namespace RestfulASPNetCore.Web.Controllers
                     return _urlHelper.Link(nameof(GetAuthors),
                         new
                         {
+                            searchQuery = parameters.SearchQuery,
                             genre = parameters.Genre,
                             pageNumber = parameters.PageNumber + 1,
                             pageSize = parameters.PageSize
@@ -72,6 +75,7 @@ namespace RestfulASPNetCore.Web.Controllers
                     return _urlHelper.Link(nameof(GetAuthors),
                         new
                         {
+                            searchQuery = parameters.SearchQuery,
                             genre = parameters.Genre,
                             pageNumber = parameters.PageNumber,
                             pageSize = parameters.PageSize

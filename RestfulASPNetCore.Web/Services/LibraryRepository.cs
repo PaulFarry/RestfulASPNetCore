@@ -74,6 +74,15 @@ namespace RestfulASPNetCore.Web.Services
                 var genreWhere = parameters.Genre.Trim().ToLowerInvariant();
                 collectionBeforePaging = collectionBeforePaging.Where(a => a.Genre.ToLowerInvariant() == genreWhere);
             }
+
+            if (!string.IsNullOrEmpty(parameters.SearchQuery))
+            {
+                var searchQuery = parameters.SearchQuery.Trim().ToLowerInvariant();
+                collectionBeforePaging = collectionBeforePaging.Where(a => a.Genre.ToLowerInvariant().Contains(searchQuery)
+                || a.FirstName.ToLowerInvariant().Contains(searchQuery)
+                || a.LastName.ToLowerInvariant().Contains(searchQuery));
+
+            }
             return PagedList<Author>.Create(collectionBeforePaging, parameters.PageNumber, parameters.PageSize);
         }
 
