@@ -51,6 +51,7 @@ namespace RestfulASPNetCore.Web
             );
 
             services.AddTransient<IPropertyMappingService, PropertyMappingService>();
+            services.AddTransient<ITypeHelperService, TypeHelperService>();
 
 
 

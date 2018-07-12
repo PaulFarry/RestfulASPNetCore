@@ -15,13 +15,14 @@ namespace RestfulASPNetCore.Web.Controllers
         private ILibraryRepository _repo;
         private IUrlHelper _urlHelper;
         private IPropertyMappingService _propertyMappingService;
+        private ITypeHelperService _typeHelperService;
 
-        public AuthorsController(ILibraryRepository repo, IUrlHelper urlHelper, IPropertyMappingService propertyMappingService)
+        public AuthorsController(ILibraryRepository repo, IUrlHelper urlHelper, IPropertyMappingService propertyMappingService, ITypeHelperService typeHelperService)
         {
             _repo = repo;
             _urlHelper = urlHelper;
             _propertyMappingService = propertyMappingService;
-
+            _typeHelperService = typeHelperService;
         }
 
         [HttpGet(Name = nameof(GetAuthors))]
@@ -29,6 +30,11 @@ namespace RestfulASPNetCore.Web.Controllers
         {
 
             if (!_propertyMappingService.ValidMappingExistsFor<Dtos.Author, Entities.Author>(parameters.OrderBy))
+            {
+                return BadRequest();
+            }
+
+            if (!_typeHelperService.TypeHasProperties<Dtos.Author>(parameters.Fields))
             {
                 return BadRequest();
             }
