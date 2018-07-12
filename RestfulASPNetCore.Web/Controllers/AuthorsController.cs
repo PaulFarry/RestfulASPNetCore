@@ -56,6 +56,7 @@ namespace RestfulASPNetCore.Web.Controllers
                     return _urlHelper.Link(nameof(GetAuthors),
                         new
                         {
+                            genre = parameters.Genre,
                             pageNumber = parameters.PageNumber - 1,
                             pageSize = parameters.PageSize
                         });
@@ -63,6 +64,7 @@ namespace RestfulASPNetCore.Web.Controllers
                     return _urlHelper.Link(nameof(GetAuthors),
                         new
                         {
+                            genre = parameters.Genre,
                             pageNumber = parameters.PageNumber + 1,
                             pageSize = parameters.PageSize
                         });
@@ -70,6 +72,7 @@ namespace RestfulASPNetCore.Web.Controllers
                     return _urlHelper.Link(nameof(GetAuthors),
                         new
                         {
+                            genre = parameters.Genre,
                             pageNumber = parameters.PageNumber,
                             pageSize = parameters.PageSize
                         });
@@ -133,9 +136,6 @@ namespace RestfulASPNetCore.Web.Controllers
             }
 
             return NoContent();
-
-
-
         }
     }
 }
