@@ -14,16 +14,25 @@ namespace RestfulASPNetCore.Web.Controllers
     {
         private ILibraryRepository _repo;
         private IUrlHelper _urlHelper;
+        private IPropertyMappingService _propertyMappingService;
 
-        public AuthorsController(ILibraryRepository repo, IUrlHelper urlHelper)
+        public AuthorsController(ILibraryRepository repo, IUrlHelper urlHelper, IPropertyMappingService propertyMappingService)
         {
             _repo = repo;
             _urlHelper = urlHelper;
+            _propertyMappingService = propertyMappingService;
+
         }
 
         [HttpGet(Name = nameof(GetAuthors))]
         public IActionResult GetAuthors([FromQuery]AuthorsResourceParameters parameters)
         {
+
+            if (!_propertyMappingService.ValidMappingExistsFor<Dtos.Author, Entities.Author>(parameters.OrderBy))
+            {
+                return BadRequest();
+            }
+
             var authors = _repo.GetAuthors(parameters);
 
             var prev = authors.HasPrevious ? CreateAuthorsResourceUri(parameters, ResourceUriType.Previous) : null;

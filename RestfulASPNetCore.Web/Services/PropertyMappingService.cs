@@ -28,7 +28,25 @@ namespace RestfulASPNetCore.Web.Services
             {
                 return matchingMapping.First()._mappingDictionary;
             }
-            throw new Exception($"Cannot find exact property mapping instrance for <{typeof(TSource)}");
+            throw new Exception($"Cannot find exact property mapping instrance for <{typeof(TSource)}>");
+        }
+
+        public bool ValidMappingExistsFor<TSource, TDestination>(string fields)
+        {
+            var propertyMapping = GetPropertyMapping<TSource, TDestination>();
+            if (string.IsNullOrWhiteSpace(fields)) return true;
+
+            var fieldsAfterSplit = fields.Split(',');
+            foreach (var field in fieldsAfterSplit.Reverse())
+            {
+                var fieldSplit = field.Split(" ");
+
+                if (!propertyMapping.ContainsKey(fieldSplit[0]))
+                {
+                    return false;
+                }
+            }
+            return true;
         }
     }
 }

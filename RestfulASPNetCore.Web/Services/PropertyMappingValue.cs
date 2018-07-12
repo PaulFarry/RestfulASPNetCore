@@ -8,10 +8,10 @@ namespace RestfulASPNetCore.Web.Services
 
         public bool Reverse { get; private set; }
 
-        public PropertyMappingValue(IEnumerable<string> destinationProperties, bool revert = false)
+        public PropertyMappingValue(IEnumerable<string> destinationProperties, bool reverse = false)
         {
             DestinationProperties = destinationProperties;
-            Reverse = revert;
+            Reverse = reverse;
         }
     }
 }
