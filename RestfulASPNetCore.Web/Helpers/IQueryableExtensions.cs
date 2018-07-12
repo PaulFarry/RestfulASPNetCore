@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Linq.Dynamic.Core;
 
 
@@ -19,7 +18,7 @@ namespace RestfulASPNetCore.Web.Helpers
             var orderByAfterSplit = orderBy.Split(',');
             foreach (var orderByClause in orderByAfterSplit.Reverse())
             {
-                var trimmedOrderBy = orderBy.Trim();
+                var trimmedOrderBy = orderByClause.Trim();
                 var orderOperations = trimmedOrderBy.Split(" ");
                 var orderDescending = false;
                 if (orderOperations.Length > 1)
