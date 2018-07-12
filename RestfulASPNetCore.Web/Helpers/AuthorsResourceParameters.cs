@@ -16,6 +16,8 @@
 
         public string SearchQuery { get; set; }
 
+        public string OrderBy { get; set; } = nameof(Dtos.Author.Name);
+
     }
 }
 

@@ -51,36 +51,7 @@ namespace RestfulASPNetCore.Web.Controllers
         private string CreateAuthorsResourceUri(
         AuthorsResourceParameters parameters, ResourceUriType type)
         {
-            switch (type)
-            {
-                case ResourceUriType.Previous:
-                    return _urlHelper.Link(nameof(GetAuthors),
-                        new
-                        {
-                            searchQuery = parameters.SearchQuery,
-                            genre = parameters.Genre,
-                            pageNumber = parameters.PageNumber - 1,
-                            pageSize = parameters.PageSize
-                        });
-                case ResourceUriType.Next:
-                    return _urlHelper.Link(nameof(GetAuthors),
-                        new
-                        {
-                            searchQuery = parameters.SearchQuery,
-                            genre = parameters.Genre,
-                            pageNumber = parameters.PageNumber + 1,
-                            pageSize = parameters.PageSize
-                        });
-                default:
-                    return _urlHelper.Link(nameof(GetAuthors),
-                        new
-                        {
-                            searchQuery = parameters.SearchQuery,
-                            genre = parameters.Genre,
-                            pageNumber = parameters.PageNumber,
-                            pageSize = parameters.PageSize
-                        });
-            }
+            return _urlHelper.Link(nameof(GetAuthors), AuthorsPagingData.GeneratePage(type, parameters));
         }
 
         [HttpGet("{id}", Name = nameof(GetAuthor))]
