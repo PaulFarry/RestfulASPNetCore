@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using NLog.Extensions.Logging;
+using Newtonsoft.Json.Serialization;
 using RestfulASPNetCore.Web.Dtos;
 using RestfulASPNetCore.Web.Entities;
 using RestfulASPNetCore.Web.Helpers;
@@ -37,6 +37,9 @@ namespace RestfulASPNetCore.Web
                     setup.InputFormatters.Add(new XmlDataContractSerializerInputFormatter(new MvcOptions { }));
                     //setup.InputFormatters.Add(new XmlDataContractSerializerInputFormatter());
                 }
+            )
+            .AddJsonOptions(options =>
+                options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver()
             )
             .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             var connectionString = Configuration["connectionStrings:libraryDBConnectionString"];
