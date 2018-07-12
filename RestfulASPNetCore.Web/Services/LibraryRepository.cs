@@ -9,10 +9,12 @@ namespace RestfulASPNetCore.Web.Services
     public class LibraryRepository : ILibraryRepository
     {
         private LibraryContext _context;
+        private IPropertyMappingService _mappingService;
 
-        public LibraryRepository(LibraryContext context)
+        public LibraryRepository(LibraryContext context, IPropertyMappingService mappingService)
         {
             _context = context;
+            _mappingService = mappingService;
         }
 
         public void AddAuthor(Author author)
@@ -67,7 +69,10 @@ namespace RestfulASPNetCore.Web.Services
 
         public PagedList<Author> GetAuthors(AuthorsResourceParameters parameters)
         {
-            var collectionBeforePaging = _context.Authors.OrderBy(a => a.FirstName).ThenBy(a => a.LastName).AsQueryable();
+            //var collectionBeforePaging = _context.Authors.OrderBy(a => a.FirstName).ThenBy(a => a.LastName).AsQueryable();
+
+            var collectionBeforePaging = _context.Authors.ApplySort(parameters.OrderBy, _mappingService.GetPropertyMapping<Dtos.Author, Author>());
+
 
             if (!string.IsNullOrEmpty(parameters.Genre))
             {
