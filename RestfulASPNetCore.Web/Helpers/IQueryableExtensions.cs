@@ -41,6 +41,10 @@ namespace RestfulASPNetCore.Web.Helpers
                         source = source.OrderBy(destinationProperty + (orderDescending ? " descending" : " ascending"));
                     }
                 }
+                else
+                {
+                    throw new ArgumentException($"Key mapping for {propertyName} is missing");
+                }
             }
             return source;
         }
