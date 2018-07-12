@@ -18,6 +18,9 @@
 
         public string OrderBy { get; set; } = nameof(Dtos.Author.Name);
 
+        public string Fields { get; set; }
+
+
     }
 }
 

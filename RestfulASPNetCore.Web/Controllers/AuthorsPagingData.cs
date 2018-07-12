@@ -13,6 +13,7 @@ namespace RestfulASPNetCore.Web.Controllers
                 genre = parameters.Genre,
                 pageSize = parameters.PageSize,
                 pageNumber = parameters.PageNumber,
+                fields = parameters.Fields,
             };
 
             switch (uriType)
@@ -29,10 +30,11 @@ namespace RestfulASPNetCore.Web.Controllers
 
         }
 
-        public string orderBy { get; set; }
         public string searchQuery { get; set; }
         public string genre { get; set; }
         public int pageNumber { get; set; }
         public int pageSize { get; set; }
+        public string orderBy { get; set; }
+        public string fields { get; set; }
     }
 }

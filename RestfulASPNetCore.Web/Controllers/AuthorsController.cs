@@ -53,7 +53,7 @@ namespace RestfulASPNetCore.Web.Controllers
 
             var result = Mapper.Map<IEnumerable<Dtos.Author>>(authors);
 
-            return Ok(result);
+            return Ok(result.ShapeData(parameters.Fields));
         }
 
 
