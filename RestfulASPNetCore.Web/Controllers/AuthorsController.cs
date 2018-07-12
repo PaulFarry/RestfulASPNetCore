@@ -70,8 +70,13 @@ namespace RestfulASPNetCore.Web.Controllers
         }
 
         [HttpGet("{id}", Name = nameof(GetAuthor))]
-        public IActionResult GetAuthor(Guid id)
+        public IActionResult GetAuthor(Guid id, [FromQuery] string fields)
         {
+            if (!_typeHelperService.TypeHasProperties<Dtos.Author>(fields))
+            {
+                return BadRequest();
+            }
+
             var author = _repo.GetAuthor(id);
             if (author == null)
             {
@@ -79,7 +84,7 @@ namespace RestfulASPNetCore.Web.Controllers
             }
 
             var result = Mapper.Map<Dtos.Author>(author);
-            return Ok(result);
+            return Ok(result.ShapeData(fields));
         }
 
         [HttpPost]
