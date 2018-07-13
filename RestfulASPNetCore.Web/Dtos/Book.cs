@@ -2,7 +2,7 @@
 
 namespace RestfulASPNetCore.Web.Dtos
 {
-    public class Book
+    public class Book : LinkedResourceBase
     {
         public Guid Id { get; set; }
 

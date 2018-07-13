@@ -6,6 +6,7 @@ using RestfulASPNetCore.Web.Dtos;
 using RestfulASPNetCore.Web.Services;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace RestfulASPNetCore.Web.Controllers
 {
@@ -15,15 +16,32 @@ namespace RestfulASPNetCore.Web.Controllers
     {
         private ILibraryRepository _libraryRepository;
         private ILogger<BooksController> _logger;
+        private IUrlHelper _urlHelper;
 
-        public BooksController(ILibraryRepository repository, ILogger<BooksController> logger)
+        public BooksController(ILibraryRepository repository, ILogger<BooksController> logger, IUrlHelper urlHelper)
         {
             _libraryRepository = repository;
             _logger = logger;
+            _urlHelper = urlHelper;
+
         }
 
+        private Book CreateLinks(Book book)
+        {
+            book.Links.Add(new Link(_urlHelper.Link(nameof(GetBookForAuthor), new { id = book.Id, authorId = book.AuthorId }), "self", "GET"));
+            book.Links.Add(new Link(_urlHelper.Link(nameof(DeleteBookForAuthor), new { id = book.Id, authorId = book.AuthorId }), "delete_book", "DELETE"));
+            book.Links.Add(new Link(_urlHelper.Link(nameof(UpdateBookForAuthor), new { id = book.Id, authorId = book.AuthorId }), "update_book", "PUT"));
+            book.Links.Add(new Link(_urlHelper.Link(nameof(PartiallyUpdateBookForAuthor), new { id = book.Id, authorId = book.AuthorId }), "partial_update_book", "PATCH"));
+            return book;
+        }
 
-        [HttpGet("author/{authorid}")]
+        private LinkedCollectionResourceWrapper<Book> CreateLinks(LinkedCollectionResourceWrapper<Book> booksWrapper)
+        {
+            booksWrapper.Links.Add(new Link(_urlHelper.Link(nameof(GetBookForAuthor), new { }), "self", "GET"));
+            return booksWrapper;
+        }
+
+        [HttpGet("author/{authorid}", Name = nameof(GetBooksForAuthor))]
         public IActionResult GetBooksForAuthor(Guid authorId)
         {
             if (!_libraryRepository.AuthorExists(authorId))
@@ -34,7 +52,15 @@ namespace RestfulASPNetCore.Web.Controllers
 
 
             var results = Mapper.Map<IEnumerable<Book>>(books);
-            return Ok(results);
+
+            results = results.Select(book =>
+            {
+                book = CreateLinks(book);
+                return book;
+            });
+
+            var wrapper = new LinkedCollectionResourceWrapper<Book>(results);
+            return Ok(CreateLinks(wrapper));
         }
 
         [HttpGet("{id}/author/{authorid}", Name = nameof(GetBookForAuthor))]
@@ -51,7 +77,7 @@ namespace RestfulASPNetCore.Web.Controllers
             }
 
             var results = Mapper.Map<Book>(book);
-            return Ok(results);
+            return Ok(CreateLinks(results));
         }
 
         [HttpPost("author/{authorid}")]
@@ -86,7 +112,7 @@ namespace RestfulASPNetCore.Web.Controllers
 
             var bookToReturn = Mapper.Map<Book>(newBook);
 
-            return CreatedAtRoute(nameof(GetBookForAuthor), new { authorId, id = newBook.Id }, bookToReturn);
+            return CreatedAtRoute(nameof(GetBookForAuthor), new { authorId, id = newBook.Id }, CreateLinks(bookToReturn));
 
         }
 
@@ -171,7 +197,7 @@ namespace RestfulASPNetCore.Web.Controllers
             return NoContent();
         }
 
-        [HttpPatch("{id}/author/{authorId}")]
+        [HttpPatch("{id}/author/{authorId}", Name = nameof(PartiallyUpdateBookForAuthor))]
         public IActionResult PartiallyUpdateBookForAuthor(Guid id, Guid authorId, [FromBody] JsonPatchDocument<UpdateBook> patchDocument)
         {
             if (patchDocument == null)
@@ -216,7 +242,7 @@ namespace RestfulASPNetCore.Web.Controllers
             patchDocument.ApplyTo(bookToPatch, ModelState);
 
             TryValidateModel(bookToPatch);
-            
+
             if (ModelState.IsValid && bookToPatch.Description == bookToPatch.Title)
             {
                 ModelState.AddModelError(nameof(CreateBook), "The description should differ from the title.");
