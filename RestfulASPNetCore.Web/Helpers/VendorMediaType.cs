@@ -12,5 +12,8 @@ namespace RestfulASPNetCore.Web.Helpers
 
         public const string NewAuthorDead = "application/vnd.marvin.authordead.full+json";
         public static MediaType NewAuthorDeadMediaType = new MediaType(NewAuthorDead);
+
+        public const string NewAuthorDeadXml = "application/vnd.marvin.authordead.full+xml";
+        public static MediaType NewAuthorDeadXmlMediaType = new MediaType(NewAuthorDeadXml);
     }
 }

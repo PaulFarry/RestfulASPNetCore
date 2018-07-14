@@ -35,7 +35,11 @@ namespace RestfulASPNetCore.Web
                 {
                     setup.ReturnHttpNotAcceptable = true;
                     setup.OutputFormatters.Add(new XmlDataContractSerializerOutputFormatter());
-                    setup.InputFormatters.Add(new XmlDataContractSerializerInputFormatter(new MvcOptions { }));
+
+                    var xmlInputFormatter = new XmlDataContractSerializerInputFormatter(new MvcOptions { });
+                    xmlInputFormatter.SupportedMediaTypes.Add(VendorMediaType.NewAuthorDeadXml);
+
+                    setup.InputFormatters.Add(xmlInputFormatter);
 
                     var jsonOutputFormatter = setup.OutputFormatters.OfType<JsonOutputFormatter>().FirstOrDefault();
                     if (jsonOutputFormatter != null)

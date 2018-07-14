@@ -180,7 +180,9 @@ namespace RestfulASPNetCore.Web.Controllers
 
         }
         [HttpPost(Name = nameof(CreateDeadAuthor))]
-        [RequestHeaderMatchesMediaType(HeaderNames.ContentType, new[] { VendorMediaType.NewAuthorDead })]
+        [RequestHeaderMatchesMediaType(HeaderNames.ContentType,
+            new[] { VendorMediaType.NewAuthorDead,
+                    VendorMediaType.NewAuthorDeadXml })]
         public IActionResult CreateDeadAuthor([FromBody]CreateDeadAuthor author, [FromHeader(Name = HeaderNames.Accept)] string mediaType)
         {
             if (author == null)
