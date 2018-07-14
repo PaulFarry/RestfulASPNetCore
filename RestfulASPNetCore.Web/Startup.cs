@@ -75,7 +75,16 @@ namespace RestfulASPNetCore.Web
             services.AddTransient<IPropertyMappingService, PropertyMappingService>();
             services.AddTransient<ITypeHelperService, TypeHelperService>();
 
-
+            services.AddHttpCacheHeaders(
+            options =>
+                {
+                    options.MaxAge = 600;
+                },
+            validationOptions =>
+                {
+                    validationOptions.AddMustRevalidate = true;
+                }
+            );
 
         }
 
@@ -121,6 +130,9 @@ namespace RestfulASPNetCore.Web
             });
 
             libraryContext.EnsureSeedDataForContext();
+
+            app.UseHttpCacheHeaders();
+
 
             app.UseMvc();
         }
