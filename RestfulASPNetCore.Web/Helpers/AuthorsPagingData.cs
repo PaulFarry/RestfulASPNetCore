@@ -1,6 +1,6 @@
 ﻿using RestfulASPNetCore.Web.Helpers;
 
-namespace RestfulASPNetCore.Web.Controllers
+namespace RestfulASPNetCore.Web.Helpers
 {
     public class AuthorsPagingData
     {
