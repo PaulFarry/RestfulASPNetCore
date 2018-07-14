@@ -80,7 +80,7 @@ namespace RestfulASPNetCore.Web.Controllers
                 return NotFound();
             }
             var currentMediaType = new MediaType(mediaType);
-            var includeLinks = currentMediaType.IsSubsetOf(VendorMediaType.HateoasLinks);
+            var includeLinks = currentMediaType.IsSubsetOf(VendorMediaType.HateoasLinksMediaType);
 
             var book = Mapper.Map<Book>(loadedBook);
             if (includeLinks)
@@ -125,7 +125,7 @@ namespace RestfulASPNetCore.Web.Controllers
             }
 
             var currentMediaType = new MediaType(mediaType);
-            var includeLinks = currentMediaType.IsSubsetOf(VendorMediaType.HateoasLinks);
+            var includeLinks = currentMediaType.IsSubsetOf(VendorMediaType.HateoasLinksMediaType);
 
             var bookToReturn = Mapper.Map<Book>(newBook);
 

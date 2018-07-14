@@ -23,7 +23,7 @@ namespace RestfulASPNetCore.Web.Controllers
         public IActionResult GetRoot([FromHeader(Name = HeaderNames.Accept)] string mediaType)
         {
             var currentMediaType = new MediaType(mediaType);
-            var includeLinks = currentMediaType.IsSubsetOf(VendorMediaType.HateoasLinks);
+            var includeLinks = currentMediaType.IsSubsetOf(VendorMediaType.HateoasLinksMediaType);
             if (includeLinks)
             {
                 var links = new List<Link>

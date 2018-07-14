@@ -47,7 +47,7 @@ namespace RestfulASPNetCore.Web.Controllers
             var authors = _repo.GetAuthors(parameters);
 
             var currentMediaType = new MediaType(mediaType);
-            var includeLinks = currentMediaType.IsSubsetOf(VendorMediaType.HateoasLinks);
+            var includeLinks = currentMediaType.IsSubsetOf(VendorMediaType.HateoasLinksMediaType);
             var prev = authors.HasPrevious ? CreateAuthorsResourceUri(parameters, ResourceUriType.Previous) : null;
             var next = authors.HasNext ? CreateAuthorsResourceUri(parameters, ResourceUriType.Next) : null;
 
@@ -157,7 +157,7 @@ namespace RestfulASPNetCore.Web.Controllers
             }
             var currentMediaType = new MediaType(mediaType);
 
-            var includeLinks = currentMediaType.IsSubsetOf(VendorMediaType.HateoasLinks);
+            var includeLinks = currentMediaType.IsSubsetOf(VendorMediaType.HateoasLinksMediaType);
 
             var author = _repo.GetAuthor(id);
             if (author == null)
@@ -179,8 +179,41 @@ namespace RestfulASPNetCore.Web.Controllers
             }
 
         }
+        [HttpPost(Name = nameof(CreateDeadAuthor))]
+        [RequestHeaderMatchesMediaType(HeaderNames.ContentType, new[] { VendorMediaType.NewAuthorDead })]
+        public IActionResult CreateDeadAuthor([FromBody]CreateDeadAuthor author, [FromHeader(Name = HeaderNames.Accept)] string mediaType)
+        {
+            if (author == null)
+            {
+                return BadRequest();
+            }
 
-        [HttpPost(Name =nameof(CreateAuthor))]
+            var newAuthor = Mapper.Map<Entities.Author>(author);
+            _repo.AddAuthor(newAuthor);
+            if (!_repo.Save())
+            {
+                throw new Exception("Failed to Create new author");
+            }
+            var createdAuthor = Mapper.Map<Author>(newAuthor);
+
+            var currentMediaType = new MediaType(mediaType);
+
+            var includeLinks = currentMediaType.IsSubsetOf(VendorMediaType.HateoasLinksMediaType);
+            if (includeLinks)
+            {
+                var links = CreateLinks(createdAuthor.Id, null);
+
+                var linkedResourceToReturn = createdAuthor.ShapeData(null) as IDictionary<string, object>;
+                linkedResourceToReturn.Add("links", links);
+
+
+                return CreatedAtRoute(nameof(GetAuthor), new { id = linkedResourceToReturn[nameof(Author.Id)] }, linkedResourceToReturn);
+            }
+            return CreatedAtRoute(nameof(GetAuthor), new { id = createdAuthor.Id }, createdAuthor);
+        }
+
+        [HttpPost(Name = nameof(CreateAuthor))]
+        [RequestHeaderMatchesMediaType(HeaderNames.ContentType, new[] { VendorMediaType.NewAuthor })]
         public IActionResult CreateAuthor([FromBody]CreateAuthor author, [FromHeader(Name = HeaderNames.Accept)] string mediaType)
         {
             if (author == null)
@@ -198,7 +231,7 @@ namespace RestfulASPNetCore.Web.Controllers
 
             var currentMediaType = new MediaType(mediaType);
 
-            var includeLinks = currentMediaType.IsSubsetOf(VendorMediaType.HateoasLinks);
+            var includeLinks = currentMediaType.IsSubsetOf(VendorMediaType.HateoasLinksMediaType);
             if (includeLinks)
             {
                 var links = CreateLinks(createdAuthor.Id, null);

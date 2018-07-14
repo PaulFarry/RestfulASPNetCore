@@ -40,9 +40,16 @@ namespace RestfulASPNetCore.Web
                     var jsonOutputFormatter = setup.OutputFormatters.OfType<JsonOutputFormatter>().FirstOrDefault();
                     if (jsonOutputFormatter != null)
                     {
-                        jsonOutputFormatter.SupportedMediaTypes.Add(VendorMediaType.HateoasMediaType);
+                        jsonOutputFormatter.SupportedMediaTypes.Add(VendorMediaType.HateoasLinks);
                     }
 
+
+                    var jsonInputFormatter = setup.InputFormatters.OfType<JsonInputFormatter>().FirstOrDefault();
+                    if (jsonInputFormatter != null)
+                    {
+                        jsonInputFormatter.SupportedMediaTypes.Add(VendorMediaType.NewAuthor);
+                        jsonInputFormatter.SupportedMediaTypes.Add(VendorMediaType.NewAuthorDead);
+                    }
                     //setup.InputFormatters.Add(new XmlDataContractSerializerInputFormatter());
                 }
             )
@@ -96,11 +103,12 @@ namespace RestfulASPNetCore.Web
                 cfg.CreateMap<Entities.Author, Dtos.Author>()
                     .ForMember(dest => dest.Name, opt => opt.MapFrom(src => $"{src.FirstName} {src.LastName}"))
                     .ForMember(dest => dest.Age, opt => opt.MapFrom(src =>
-                        src.DateOfBirth.GetCurrentAge()));
+                        src.DateOfBirth.GetCurrentAge(src.DateOfDeath)));
 
                 cfg.CreateMap<Entities.Book, Dtos.Book>();
 
                 cfg.CreateMap<CreateAuthor, Entities.Author>();
+                cfg.CreateMap<CreateDeadAuthor, Entities.Author>();
 
                 cfg.CreateMap<CreateBook, Entities.Book>();
                 cfg.CreateMap<UpdateBook, Entities.Book>();
