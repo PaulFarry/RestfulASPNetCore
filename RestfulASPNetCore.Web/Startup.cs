@@ -13,6 +13,7 @@ using RestfulASPNetCore.Web.Dtos;
 using RestfulASPNetCore.Web.Entities;
 using RestfulASPNetCore.Web.Helpers;
 using RestfulASPNetCore.Web.Services;
+using System.Linq;
 
 
 namespace RestfulASPNetCore.Web
@@ -35,6 +36,13 @@ namespace RestfulASPNetCore.Web
                     setup.ReturnHttpNotAcceptable = true;
                     setup.OutputFormatters.Add(new XmlDataContractSerializerOutputFormatter());
                     setup.InputFormatters.Add(new XmlDataContractSerializerInputFormatter(new MvcOptions { }));
+
+                    var jsonOutputFormatter = setup.OutputFormatters.OfType<JsonOutputFormatter>().FirstOrDefault();
+                    if (jsonOutputFormatter != null)
+                    {
+                        jsonOutputFormatter.SupportedMediaTypes.Add(VendorMediaType.HateoasMediaType);
+                    }
+
                     //setup.InputFormatters.Add(new XmlDataContractSerializerInputFormatter());
                 }
             )

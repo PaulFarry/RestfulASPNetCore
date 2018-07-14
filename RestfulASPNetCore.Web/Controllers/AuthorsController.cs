@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Formatters;
+using Microsoft.Net.Http.Headers;
 using RestfulASPNetCore.Web.Dtos;
 using RestfulASPNetCore.Web.Helpers;
 using RestfulASPNetCore.Web.Services;
@@ -27,7 +29,8 @@ namespace RestfulASPNetCore.Web.Controllers
         }
 
         [HttpGet(Name = nameof(GetAuthors))]
-        public IActionResult GetAuthors([FromQuery]AuthorsResourceParameters parameters)
+        public IActionResult GetAuthors([FromQuery]AuthorsResourceParameters parameters,
+            [FromHeader(Name = HeaderNames.Accept)] string mediaType)
         {
 
             if (!_propertyMappingService.ValidMappingExistsFor<Author, Entities.Author>(parameters.OrderBy))
@@ -40,36 +43,50 @@ namespace RestfulASPNetCore.Web.Controllers
                 return BadRequest();
             }
 
+
             var authors = _repo.GetAuthors(parameters);
+
+            var currentMediaType = new MediaType(mediaType);
+            var includeLinks = currentMediaType.IsSubsetOf(VendorMediaType.HateoasLinks);
+            var prev = authors.HasPrevious ? CreateAuthorsResourceUri(parameters, ResourceUriType.Previous) : null;
+            var next = authors.HasNext ? CreateAuthorsResourceUri(parameters, ResourceUriType.Next) : null;
+
+            var result = Mapper.Map<IEnumerable<Author>>(authors);
 
             var pagination = new Pagination()
             {
+                IncludeLinks = !includeLinks,
                 TotalCount = authors.TotalCount,
                 PageSize = authors.PageSize,
                 CurrentPage = authors.CurrentPage,
                 TotalPages = authors.TotalPages,
+                NextPageLink = next,
+                PreviousPageLink = prev,
             };
 
             Pagination.AddHeader(Response, pagination);
 
-            var result = Mapper.Map<IEnumerable<Author>>(authors);
-
-            var links = CreateLinks(parameters, authors.HasNext, authors.HasPrevious);
-
-            var shapedAuthors = result.ShapeData(parameters.Fields);
-
-            var shapedAuthorsWithLinks = shapedAuthors.Select(a =>
+            if (includeLinks)
             {
-                var authorDictionary = a as IDictionary<string, object>;
-                var authorLinks = CreateLinks((Guid)authorDictionary[nameof(Author.Id)], parameters.Fields);
-                authorDictionary.Add("links", authorLinks);
-                return authorDictionary;
+                var links = CreateLinks(parameters, authors.HasNext, authors.HasPrevious);
+
+                var shapedAuthors = result.ShapeData(parameters.Fields);
+
+                var shapedAuthorsWithLinks = shapedAuthors.Select(a =>
+                {
+                    var authorDictionary = a as IDictionary<string, object>;
+                    var authorLinks = CreateLinks((Guid)authorDictionary[nameof(Author.Id)], parameters.Fields);
+                    authorDictionary.Add("links", authorLinks);
+                    return authorDictionary;
+                }
+                );
+
+                var linkCollection = new { value = shapedAuthorsWithLinks, links };
+                return Ok(linkCollection);
             }
-            );
 
-            var linkCollection = new { value = shapedAuthorsWithLinks, links };
+            return Ok(result);
 
-            return Ok(linkCollection);
         }
 
 
@@ -132,12 +149,15 @@ namespace RestfulASPNetCore.Web.Controllers
         }
 
         [HttpGet("{id}", Name = nameof(GetAuthor))]
-        public IActionResult GetAuthor(Guid id, [FromQuery] string fields)
+        public IActionResult GetAuthor(Guid id, [FromQuery] string fields, [FromHeader(Name = HeaderNames.Accept)] string mediaType)
         {
             if (!_typeHelperService.TypeHasProperties<Author>(fields))
             {
                 return BadRequest();
             }
+            var currentMediaType = new MediaType(mediaType);
+
+            var includeLinks = currentMediaType.IsSubsetOf(VendorMediaType.HateoasLinks);
 
             var author = _repo.GetAuthor(id);
             if (author == null)
@@ -146,15 +166,22 @@ namespace RestfulASPNetCore.Web.Controllers
             }
 
             var result = Mapper.Map<Author>(author);
+            if (includeLinks)
+            {
+                var links = CreateLinks(id, fields);
+                var linkedResourceToReturn = result.ShapeData(fields) as IDictionary<string, object>;
+                linkedResourceToReturn.Add("links", links);
+                return Ok(linkedResourceToReturn);
+            }
+            else
+            {
+                return Ok(result);
+            }
 
-            var links = CreateLinks(id, fields);
-            var linkedResourceToReturn = result.ShapeData(fields) as IDictionary<string, object>;
-            linkedResourceToReturn.Add("links", links);
-            return Ok(linkedResourceToReturn);
         }
 
         [HttpPost]
-        public IActionResult CreateAuthor([FromBody]CreateAuthor author)
+        public IActionResult CreateAuthor([FromBody]CreateAuthor author, [FromHeader(Name = HeaderNames.Accept)] string mediaType)
         {
             if (author == null)
             {
@@ -169,13 +196,20 @@ namespace RestfulASPNetCore.Web.Controllers
             }
             var createdAuthor = Mapper.Map<Author>(newAuthor);
 
-            var links = CreateLinks(createdAuthor.Id, null);
+            var currentMediaType = new MediaType(mediaType);
 
-            var linkedResourceToReturn = createdAuthor.ShapeData(null) as IDictionary<string, object>;
-            linkedResourceToReturn.Add("links", links);
+            var includeLinks = currentMediaType.IsSubsetOf(VendorMediaType.HateoasLinks);
+            if (includeLinks)
+            {
+                var links = CreateLinks(createdAuthor.Id, null);
+
+                var linkedResourceToReturn = createdAuthor.ShapeData(null) as IDictionary<string, object>;
+                linkedResourceToReturn.Add("links", links);
 
 
-            return CreatedAtRoute(nameof(GetAuthor), new { id = linkedResourceToReturn[nameof(Author.Id)] }, linkedResourceToReturn);
+                return CreatedAtRoute(nameof(GetAuthor), new { id = linkedResourceToReturn[nameof(Author.Id)] }, linkedResourceToReturn);
+            }
+            return CreatedAtRoute(nameof(GetAuthor), new { id = createdAuthor.Id }, createdAuthor);
         }
 
 

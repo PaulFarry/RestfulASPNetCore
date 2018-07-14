@@ -1,8 +1,11 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Extensions.Logging;
+using Microsoft.Net.Http.Headers;
 using RestfulASPNetCore.Web.Dtos;
+using RestfulASPNetCore.Web.Helpers;
 using RestfulASPNetCore.Web.Services;
 using System;
 using System.Collections.Generic;
@@ -64,24 +67,35 @@ namespace RestfulASPNetCore.Web.Controllers
         }
 
         [HttpGet("{id}/author/{authorid}", Name = nameof(GetBookForAuthor))]
-        public IActionResult GetBookForAuthor(Guid authorId, Guid id)
+        public IActionResult GetBookForAuthor(Guid authorId, Guid id,
+            [FromHeader(Name = HeaderNames.Accept)] string mediaType)
         {
             if (!_libraryRepository.AuthorExists(authorId))
             {
                 return NotFound();
             }
-            var book = _libraryRepository.GetBookForAuthor(authorId, id);
-            if (book == null)
+            var loadedBook = _libraryRepository.GetBookForAuthor(authorId, id);
+            if (loadedBook == null)
             {
                 return NotFound();
             }
+            var currentMediaType = new MediaType(mediaType);
+            var includeLinks = currentMediaType.IsSubsetOf(VendorMediaType.HateoasLinks);
 
-            var results = Mapper.Map<Book>(book);
-            return Ok(CreateLinks(results));
+            var book = Mapper.Map<Book>(loadedBook);
+            if (includeLinks)
+            {
+                return Ok(CreateLinks(book));
+            }
+            else
+            {
+                return Ok(book);
+            }
         }
 
         [HttpPost("author/{authorid}", Name = nameof(CreateBookForAuthor))]
-        public IActionResult CreateBookForAuthor(Guid authorId, [FromBody] CreateBook book)
+        public IActionResult CreateBookForAuthor(Guid authorId, [FromBody] CreateBook book,
+            [FromHeader(Name = HeaderNames.Accept)] string mediaType)
         {
             if (book == null)
             {
@@ -110,10 +124,19 @@ namespace RestfulASPNetCore.Web.Controllers
                 throw new Exception($"Couldn't save new book for Author {authorId}");
             }
 
+            var currentMediaType = new MediaType(mediaType);
+            var includeLinks = currentMediaType.IsSubsetOf(VendorMediaType.HateoasLinks);
+
             var bookToReturn = Mapper.Map<Book>(newBook);
 
-            return CreatedAtRoute(nameof(GetBookForAuthor), new { authorId, id = newBook.Id }, CreateLinks(bookToReturn));
-
+            if (includeLinks)
+            {
+                return CreatedAtRoute(nameof(GetBookForAuthor), new { authorId, id = newBook.Id }, CreateLinks(bookToReturn));
+            }
+            else
+            {
+                return CreatedAtRoute(nameof(GetBookForAuthor), new { authorId, id = newBook.Id }, bookToReturn);
+            }
         }
 
         [HttpDelete("{id}/author/{authorid}", Name = nameof(DeleteBookForAuthor))]
