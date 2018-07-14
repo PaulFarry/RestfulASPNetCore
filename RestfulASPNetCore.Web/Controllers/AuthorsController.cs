@@ -128,7 +128,7 @@ namespace RestfulASPNetCore.Web.Controllers
             return links;
         }
 
-        public IEnumerable<Link> CreateLinks(AuthorsResourceParameters authorsResourceParameters, bool hasNext, bool hasPrevious)
+        private IEnumerable<Link> CreateLinks(AuthorsResourceParameters authorsResourceParameters, bool hasNext, bool hasPrevious)
         {
             var links = new List<Link>();
 
