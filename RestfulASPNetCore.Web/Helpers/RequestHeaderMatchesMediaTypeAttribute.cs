@@ -3,6 +3,7 @@ using System;
 
 namespace RestfulASPNetCore.Web.Helpers
 {
+    [AttributeUsage(AttributeTargets.All, AllowMultiple = true, Inherited = true)]
     public class RequestHeaderMatchesMediaTypeAttribute : Attribute, IActionConstraint
     {
         private readonly string _requestHeaderToMatch;

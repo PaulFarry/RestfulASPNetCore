@@ -183,6 +183,9 @@ namespace RestfulASPNetCore.Web.Controllers
         [RequestHeaderMatchesMediaType(HeaderNames.ContentType,
             new[] { VendorMediaType.NewAuthorDead,
                     VendorMediaType.NewAuthorDeadXml })]
+        //Additional Constraints ...
+        //[RequestHeaderMatchesMediaType(HeaderNames.Accept, new[] { "dsawdfdsf" })]
+
         public IActionResult CreateDeadAuthor([FromBody]CreateDeadAuthor author, [FromHeader(Name = HeaderNames.Accept)] string mediaType)
         {
             if (author == null)
