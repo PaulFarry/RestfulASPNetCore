@@ -80,7 +80,7 @@ namespace RestfulASPNetCore.Web.Controllers
             return Ok(CreateLinks(results));
         }
 
-        [HttpPost("author/{authorid}")]
+        [HttpPost("author/{authorid}", Name = nameof(CreateBookForAuthor))]
         public IActionResult CreateBookForAuthor(Guid authorId, [FromBody] CreateBook book)
         {
             if (book == null)

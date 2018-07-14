@@ -5,6 +5,7 @@ using RestfulASPNetCore.Web.Helpers;
 using RestfulASPNetCore.Web.Services;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace RestfulASPNetCore.Web.Controllers
 {
@@ -29,25 +30,20 @@ namespace RestfulASPNetCore.Web.Controllers
         public IActionResult GetAuthors([FromQuery]AuthorsResourceParameters parameters)
         {
 
-            if (!_propertyMappingService.ValidMappingExistsFor<Dtos.Author, Entities.Author>(parameters.OrderBy))
+            if (!_propertyMappingService.ValidMappingExistsFor<Author, Entities.Author>(parameters.OrderBy))
             {
                 return BadRequest();
             }
 
-            if (!_typeHelperService.TypeHasProperties<Dtos.Author>(parameters.Fields))
+            if (!_typeHelperService.TypeHasProperties<Author>(parameters.Fields))
             {
                 return BadRequest();
             }
 
             var authors = _repo.GetAuthors(parameters);
 
-            var prev = authors.HasPrevious ? CreateAuthorsResourceUri(parameters, ResourceUriType.Previous) : null;
-            var next = authors.HasNext ? CreateAuthorsResourceUri(parameters, ResourceUriType.Next) : null;
-
             var pagination = new Pagination()
             {
-                NextPageLink = next,
-                PreviousPageLink = prev,
                 TotalCount = authors.TotalCount,
                 PageSize = authors.PageSize,
                 CurrentPage = authors.CurrentPage,
@@ -56,10 +52,24 @@ namespace RestfulASPNetCore.Web.Controllers
 
             Pagination.AddHeader(Response, pagination);
 
+            var result = Mapper.Map<IEnumerable<Author>>(authors);
 
-            var result = Mapper.Map<IEnumerable<Dtos.Author>>(authors);
+            var links = CreateLinks(parameters, authors.HasNext, authors.HasPrevious);
 
-            return Ok(result.ShapeData(parameters.Fields));
+            var shapedAuthors = result.ShapeData(parameters.Fields);
+
+            var shapedAuthorsWithLinks = shapedAuthors.Select(a =>
+            {
+                var authorDictionary = a as IDictionary<string, object>;
+                var authorLinks = CreateLinks((Guid)authorDictionary[nameof(Author.Id)], parameters.Fields);
+                authorDictionary.Add("links", authorLinks);
+                return authorDictionary;
+            }
+            );
+
+            var linkCollection = new { value = shapedAuthorsWithLinks, links };
+
+            return Ok(linkCollection);
         }
 
 
@@ -69,10 +79,62 @@ namespace RestfulASPNetCore.Web.Controllers
             return _urlHelper.Link(nameof(GetAuthors), AuthorsPagingData.GeneratePage(type, parameters));
         }
 
+        private IEnumerable<Link> CreateLinks(Guid id, string fields)
+        {
+            var links = new List<Link>();
+
+            if (string.IsNullOrWhiteSpace(fields))
+            {
+                links.Add(new Link(_urlHelper.Link(nameof(GetAuthor), new { id }),
+                "self",
+                "GET"));
+            }
+            else
+            {
+                links.Add(new Link(_urlHelper.Link(nameof(GetAuthor), new { id, fields }),
+                "self",
+                "GET"));
+            }
+
+            links.Add(new Link(_urlHelper.Link(nameof(GetAuthor), new { id }),
+            "delete_author",
+            "DELETE"));
+
+            links.Add(new Link(_urlHelper.Link(nameof(BooksController.CreateBookForAuthor), new { authorId = id }),
+            "create_book_for_author",
+            "POST"));
+
+            links.Add(new Link(_urlHelper.Link(nameof(BooksController.GetBooksForAuthor), new { authorId = id }),
+            "books",
+            "POST"));
+
+            return links;
+        }
+
+        public IEnumerable<Link> CreateLinks(AuthorsResourceParameters authorsResourceParameters, bool hasNext, bool hasPrevious)
+        {
+            var links = new List<Link>();
+
+            links.Add(new Link(CreateAuthorsResourceUri(authorsResourceParameters, ResourceUriType.Current), "self", "GET"));
+
+            if (hasNext)
+            {
+                links.Add(new Link(CreateAuthorsResourceUri(authorsResourceParameters, ResourceUriType.Next), "nextPage", "GET"));
+            }
+
+            if (hasNext)
+            {
+                links.Add(new Link(CreateAuthorsResourceUri(authorsResourceParameters, ResourceUriType.Previous), "previousPage", "GET"));
+            }
+
+
+            return links;
+        }
+
         [HttpGet("{id}", Name = nameof(GetAuthor))]
         public IActionResult GetAuthor(Guid id, [FromQuery] string fields)
         {
-            if (!_typeHelperService.TypeHasProperties<Dtos.Author>(fields))
+            if (!_typeHelperService.TypeHasProperties<Author>(fields))
             {
                 return BadRequest();
             }
@@ -83,8 +145,12 @@ namespace RestfulASPNetCore.Web.Controllers
                 return NotFound();
             }
 
-            var result = Mapper.Map<Dtos.Author>(author);
-            return Ok(result.ShapeData(fields));
+            var result = Mapper.Map<Author>(author);
+
+            var links = CreateLinks(id, fields);
+            var linkedResourceToReturn = result.ShapeData(fields) as IDictionary<string, object>;
+            linkedResourceToReturn.Add("links", links);
+            return Ok(linkedResourceToReturn);
         }
 
         [HttpPost]
@@ -101,8 +167,15 @@ namespace RestfulASPNetCore.Web.Controllers
             {
                 throw new Exception("Failed to Create new author");
             }
-            var createdAuthor = Mapper.Map<Dtos.Author>(newAuthor);
-            return CreatedAtRoute(nameof(GetAuthor), new { id = newAuthor.Id }, createdAuthor);
+            var createdAuthor = Mapper.Map<Author>(newAuthor);
+
+            var links = CreateLinks(createdAuthor.Id, null);
+
+            var linkedResourceToReturn = createdAuthor.ShapeData(null) as IDictionary<string, object>;
+            linkedResourceToReturn.Add("links", links);
+
+
+            return CreatedAtRoute(nameof(GetAuthor), new { id = linkedResourceToReturn[nameof(Author.Id)] }, linkedResourceToReturn);
         }
 
 
@@ -116,7 +189,8 @@ namespace RestfulASPNetCore.Web.Controllers
             }
             return NotFound();
         }
-        [HttpDelete("{id}")]
+
+        [HttpDelete("{id}", Name = nameof(DeleteAuthor))]
         public IActionResult DeleteAuthor(Guid id)
         {
             var author = _repo.GetAuthor(id);
