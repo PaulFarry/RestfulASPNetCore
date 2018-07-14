@@ -86,6 +86,9 @@ namespace RestfulASPNetCore.Web
                 }
             );
 
+            services.AddResponseCaching();
+
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -130,6 +133,8 @@ namespace RestfulASPNetCore.Web
             });
 
             libraryContext.EnsureSeedDataForContext();
+
+            app.UseResponseCaching();
 
             app.UseHttpCacheHeaders();
 
