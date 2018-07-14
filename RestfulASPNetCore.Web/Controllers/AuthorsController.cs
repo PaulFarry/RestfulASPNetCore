@@ -180,7 +180,7 @@ namespace RestfulASPNetCore.Web.Controllers
 
         }
 
-        [HttpPost]
+        [HttpPost(Name =nameof(CreateAuthor))]
         public IActionResult CreateAuthor([FromBody]CreateAuthor author, [FromHeader(Name = HeaderNames.Accept)] string mediaType)
         {
             if (author == null)
