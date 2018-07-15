@@ -1,0 +1,1394 @@
+{
+	"info": {
+		"_postman_id": "9c0fc5d9-25b3-4f9e-9392-eba1d0c39f11",
+		"name": "Restful Training",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Start Point Hateoas",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/vnd.marvin.hateos+json"
+					}
+				],
+				"body": {},
+				"url": {
+					"raw": "https://localhost:44373/api/",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "44373",
+					"path": [
+						"api",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Start Point",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "https://localhost:44373/api/",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "44373",
+					"path": [
+						"api",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Author with Tests",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "dfba48db-a680-46ee-904f-fe8a33e8296a",
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Id matches returned id\", function (){",
+							"    var jsonData = pm.response.json();",
+							"    var idMatched = jsonData.id === \"f74d6899-9ed2-4137-9876-66b070553f8f\";",
+							"    pm.expect(idMatched).to.be.true;",
+							"}",
+							")",
+							"",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "https://localhost:44373/api/authors/f74d6899-9ed2-4137-9876-66b070553f8f",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "44373",
+					"path": [
+						"api",
+						"authors",
+						"f74d6899-9ed2-4137-9876-66b070553f8f"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Authors",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "a81b45b5-fa00-4f55-9be4-210e0c0e5c12",
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"X-Pagination is present\", function () {",
+							"    pm.response.to.have.header(\"X-Pagination\");",
+							"});",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json"
+					}
+				],
+				"body": {},
+				"url": {
+					"raw": "https://localhost:44373/api/authors?orderby=name&pagesize=1",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "44373",
+					"path": [
+						"api",
+						"authors"
+					],
+					"query": [
+						{
+							"key": "orderby",
+							"value": "name"
+						},
+						{
+							"key": "pagesize",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Authors Hateoas",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/vnd.marvin.hateos+json"
+					}
+				],
+				"body": {},
+				"url": {
+					"raw": "https://localhost:44373/api/authors?orderby=name",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "44373",
+					"path": [
+						"api",
+						"authors"
+					],
+					"query": [
+						{
+							"key": "orderby",
+							"value": "name"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Authors Shaped",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "https://localhost:44373/api/authors?fields=id,name,+id&pagesize=1",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "44373",
+					"path": [
+						"api",
+						"authors"
+					],
+					"query": [
+						{
+							"key": "fields",
+							"value": "id,name,+id"
+						},
+						{
+							"key": "pagesize",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Authors Genre = Fantasy",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "https://localhost:44373/api/authors?genre=Fantasy",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "44373",
+					"path": [
+						"api",
+						"authors"
+					],
+					"query": [
+						{
+							"key": "genre",
+							"value": "Fantasy"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Authors SearchQuery",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "https://localhost:44373/api/authors?orderBy=ages&searchQuery=a&pageNumber=2&pageSize=2",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "44373",
+					"path": [
+						"api",
+						"authors"
+					],
+					"query": [
+						{
+							"key": "orderBy",
+							"value": "ages"
+						},
+						{
+							"key": "searchQuery",
+							"value": "a"
+						},
+						{
+							"key": "pageNumber",
+							"value": "2"
+						},
+						{
+							"key": "pageSize",
+							"value": "2"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Authors Page 1 Size 5",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "https://localhost:44373/api/authors?pagenumber=1&pagesize=5",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "44373",
+					"path": [
+						"api",
+						"authors"
+					],
+					"query": [
+						{
+							"key": "pagenumber",
+							"value": "1"
+						},
+						{
+							"key": "pagesize",
+							"value": "5"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Authors Page 2 Size 5",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "https://localhost:44373/api/authors?pagenumber=2&pagesize=5",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "44373",
+					"path": [
+						"api",
+						"authors"
+					],
+					"query": [
+						{
+							"key": "pagenumber",
+							"value": "2"
+						},
+						{
+							"key": "pagesize",
+							"value": "5"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Author Hateoas",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/vnd.marvin.hateos+json"
+					}
+				],
+				"body": {},
+				"url": {
+					"raw": "https://localhost:44373/api/authors/f74d6899-9ed2-4137-9876-66b070553f8f",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "44373",
+					"path": [
+						"api",
+						"authors",
+						"f74d6899-9ed2-4137-9876-66b070553f8f"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Author Shaped",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "https://localhost:44373/api/authors/f74d6899-9ed2-4137-9876-66b070553f8f?fields=id,age",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "44373",
+					"path": [
+						"api",
+						"authors",
+						"f74d6899-9ed2-4137-9876-66b070553f8f"
+					],
+					"query": [
+						{
+							"key": "fields",
+							"value": "id,age"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Author",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "https://localhost:44373/api/authors/f74d6899-9ed2-4137-9876-66b070553f8f",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "44373",
+					"path": [
+						"api",
+						"authors",
+						"f74d6899-9ed2-4137-9876-66b070553f8f"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Post to Author",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "https://localhost:44373/api/authors/f74d6899-9ed2-4137-9876-66b070553f8f",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "44373",
+					"path": [
+						"api",
+						"authors",
+						"f74d6899-9ed2-4137-9876-66b070553f8f"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Author Not Found",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "https://localhost:44373/api/authors/f74d6899-9ed2-4137-9876-11b070553f8f",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "44373",
+					"path": [
+						"api",
+						"authors",
+						"f74d6899-9ed2-4137-9876-11b070553f8f"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Books for Author",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "https://localhost:44373/api/books/author/76053df4-6687-4353-8937-b45556748abe",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "44373",
+					"path": [
+						"api",
+						"books",
+						"author",
+						"76053df4-6687-4353-8937-b45556748abe"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Book for Author",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "If-None-Match",
+						"value": "918DB23931F6CFCFC23E64B2346F71E8",
+						"disabled": true
+					}
+				],
+				"body": {},
+				"url": {
+					"raw": "https://localhost:44373/api/books/09af5a52-9421-44e8-a2bb-a6b9ccbc8239/author/76053df4-6687-4353-8937-b45556748abe",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "44373",
+					"path": [
+						"api",
+						"books",
+						"09af5a52-9421-44e8-a2bb-a6b9ccbc8239",
+						"author",
+						"76053df4-6687-4353-8937-b45556748abe"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Book for Author",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n   \"title\": \"MyaaaA safDance with Dragons\",\n    \"description\": \"aadsfasdfasfdaaA Dance with Dragons is the fifth of seven planned novels in the epic fantasy series A Song of Ice and Fire by American author George R. R. Martin.\",\n}"
+				},
+				"url": {
+					"raw": "https://localhost:44373/api/books/19af5a52-9421-44e8-a2bb-a6b9ccbc8239/author/76053df4-6687-4353-8937-b45556748abe",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "44373",
+					"path": [
+						"api",
+						"books",
+						"19af5a52-9421-44e8-a2bb-a6b9ccbc8239",
+						"author",
+						"76053df4-6687-4353-8937-b45556748abe"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Put Update Book for Author",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"title\": \"MyaaaA safDance with Dragons\",\n    \"description\": \"aadsfasdfasfdaaA Dance with Dragons is the fifth of seven planned novels in the epic fantasy series A Song of Ice and Fire by American author George R. R. Martin.\",\n}"
+				},
+				"url": {
+					"raw": "https://localhost:44373/api/books/29af5a52-9421-44e8-a2bb-a6b9ccbc8239/author/76053df4-6687-4353-8937-b45556748abe",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "44373",
+					"path": [
+						"api",
+						"books",
+						"29af5a52-9421-44e8-a2bb-a6b9ccbc8239",
+						"author",
+						"76053df4-6687-4353-8937-b45556748abe"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Book for Author",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "https://localhost:44373/api/books/09af5a52-9421-44e8-a2bb-a6b9ccbc8239/author/76053df4-6687-4353-8937-b45556748abe",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "44373",
+					"path": [
+						"api",
+						"books",
+						"09af5a52-9421-44e8-a2bb-a6b9ccbc8239",
+						"author",
+						"76053df4-6687-4353-8937-b45556748abe"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Patch Book for Author",
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json-patch+json"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "[\n{\n \"op\" : \"replace\",\n \"path\" : \"/title\",\n \"value\" : \"aaaaA gmae of Thrones - Updated\"\n}\n]"
+				},
+				"url": {
+					"raw": "https://localhost:44373/api/books/09af5a52-9421-44e8-a2bb-a6b9ccbc8239/author/76053df4-6687-4353-8937-b45556748abe",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "44373",
+					"path": [
+						"api",
+						"books",
+						"09af5a52-9421-44e8-a2bb-a6b9ccbc8239",
+						"author",
+						"76053df4-6687-4353-8937-b45556748abe"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Patch Book for Author Empty Fields",
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json-patch+json"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "[\n{\n \"op\" : \"remove\",\n \"path\" : \"/description\",\n},\n{\n \"op\" : \"remove\",\n \"path\" : \"/title\",\n},]"
+				},
+				"url": {
+					"raw": "https://localhost:44373/api/books/09af5a52-9421-44e8-a2bb-a6b9ccbc8239/author/76053df4-6687-4353-8937-b45556748abe",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "44373",
+					"path": [
+						"api",
+						"books",
+						"09af5a52-9421-44e8-a2bb-a6b9ccbc8239",
+						"author",
+						"76053df4-6687-4353-8937-b45556748abe"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Patch Book for Author (non existing)",
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json-patch+json"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "[\n{\n \"op\" : \"replace\",\n \"path\" : \"/title\",\n \"value\" : \"A gmae of Thrones - Updated\"\n},\n{\n \"op\" : \"replace\",\n \"path\" : \"/description\",\n \"value\" : \"My New Description\"\n}\n]"
+				},
+				"url": {
+					"raw": "https://localhost:44373/api/books/2aaf5a52-9421-44e8-a2bb-a6b9ccbc8239/author/76053df4-6687-4353-8937-b45556748abe",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "44373",
+					"path": [
+						"api",
+						"books",
+						"2aaf5a52-9421-44e8-a2bb-a6b9ccbc8239",
+						"author",
+						"76053df4-6687-4353-8937-b45556748abe"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get a Book",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/xmla",
+						"disabled": true
+					}
+				],
+				"body": {},
+				"url": {
+					"raw": "https://localhost:44373/api/books/09af5a52-9421-44e8-a2bb-a6b9ccbc8239",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "44373",
+					"path": [
+						"api",
+						"books",
+						"09af5a52-9421-44e8-a2bb-a6b9ccbc8239"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New Author",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\"firstName\" : \"James\",\n\"lastName\" : \"Ellroy\", \n\"dateOfBirth\" : \"1948-03-04T00:00:00\",\n\"genre\" : \"Thriller\"\n}"
+				},
+				"url": {
+					"raw": "https://localhost:44373/api/authors",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "44373",
+					"path": [
+						"api",
+						"authors"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New Author V1",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/vnd.marvin.author.full+json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\"firstName\" : \"James\",\n\"lastName\" : \"Ellroy\", \n\"dateOfBirth\" : \"1948-03-04T00:00:00\",\n\"genre\" : \"Thriller\"\n}"
+				},
+				"url": {
+					"raw": "https://localhost:44373/api/authors",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "44373",
+					"path": [
+						"api",
+						"authors"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New Author V2",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/vnd.marvin.authordead.full+json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\"firstName\" : \"James\",\n\"lastName\" : \"Ellroy\", \n\"dateOfBirth\" : \"1948-03-04T00:00:00\",\n\"dateOfDeath\" : \"2058-03-04T00:00:00\",\n\"genre\" : \"Thriller\"\n}"
+				},
+				"url": {
+					"raw": "https://localhost:44373/api/authors",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "44373",
+					"path": [
+						"api",
+						"authors"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New Author Hateoas",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/vnd.marvin.hateos+json"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\"firstName\" : \"James\",\n\"lastName\" : \"Ellroy\", \n\"dateOfBirth\" : \"1948-03-04T00:00:00\",\n\"genre\" : \"Thriller\"\n}"
+				},
+				"url": {
+					"raw": "https://localhost:44373/api/authors",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "44373",
+					"path": [
+						"api",
+						"authors"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New Author(XML In JSON Out)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/xml"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "<CreateAuthor xmlns:i=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns=\"http://schemas.datacontract.org/2004/07/RestfulASPNetCore.Web.Dtos\">\n        <DateOfBirth xmlns:d3p1=\"http://schemas.datacontract.org/2004/07/System\">\n            <d3p1:DateTime>1948-03-03T00:00:00Z</d3p1:DateTime>\n            <d3p1:OffsetMinutes>0</d3p1:OffsetMinutes>\n        </DateOfBirth>\n        <Firstname>James</Firstname>\n        <Genre>Thriller</Genre>\n        <Lastname>Ellroy</Lastname>\n</CreateAuthor>\n"
+				},
+				"url": {
+					"raw": "https://localhost:44373/api/authors",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "44373",
+					"path": [
+						"api",
+						"authors"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New Author(XML In XML Out)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/xml"
+					},
+					{
+						"key": "Accept",
+						"value": "application/xml"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "<CreateAuthor xmlns:i=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns=\"http://schemas.datacontract.org/2004/07/RestfulASPNetCore.Web.Dtos\">\n        <DateOfBirth xmlns:d3p1=\"http://schemas.datacontract.org/2004/07/System\">\n            <d3p1:DateTime>1948-03-03T00:00:00Z</d3p1:DateTime>\n            <d3p1:OffsetMinutes>0</d3p1:OffsetMinutes>\n        </DateOfBirth>\n        <Firstname>James</Firstname>\n        <Genre>Thriller</Genre>\n        <Lastname>Ellroy</Lastname>\n</CreateAuthor>\n"
+				},
+				"url": {
+					"raw": "https://localhost:44373/api/authors",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "44373",
+					"path": [
+						"api",
+						"authors"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New Author V2(XML In XML Out)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/vnd.marvin.authordead.full+xml"
+					},
+					{
+						"key": "Accept",
+						"value": "application/xml"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "<CreateDeadAuthor xmlns:i=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns=\"http://schemas.datacontract.org/2004/07/RestfulASPNetCore.Web.Dtos\">\n        <DateOfBirth xmlns:d3p1=\"http://schemas.datacontract.org/2004/07/System\">\n            <d3p1:DateTime>1948-03-03T00:00:00Z</d3p1:DateTime>\n            <d3p1:OffsetMinutes>0</d3p1:OffsetMinutes>\n        </DateOfBirth>\n        <DateOfDeath xmlns:d3p1=\"http://schemas.datacontract.org/2004/07/System\">\n            <d3p1:DateTime>1971-03-03T00:00:00Z</d3p1:DateTime>\n            <d3p1:OffsetMinutes>0</d3p1:OffsetMinutes>\n        </DateOfDeath>       \n        <Firstname>James</Firstname>\n        <Genre>Thriller</Genre>\n        <Lastname>Ellroy</Lastname>\n</CreateDeadAuthor>\n"
+				},
+				"url": {
+					"raw": "https://localhost:44373/api/authors",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "44373",
+					"path": [
+						"api",
+						"authors"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New Author Collection",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "[{\n\"firstName\" : \"James\",\n\"lastName\" : \"Ellroy\", \n\"dateOfBirth\" : \"1948-03-04T00:00:00\",\n\"genre\" : \"Thriller\"\n},\n{\n\"firstName\" : \"aaa\",\n\"lastName\" : \"bbb\", \n\"dateOfBirth\" : \"1971-03-04T00:00:00\",\n\"genre\" : \"Sci-Fi\"\n},\n]"
+				},
+				"url": {
+					"raw": "https://localhost:44373/api/authorcollection",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "44373",
+					"path": [
+						"api",
+						"authorcollection"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add Book For Author",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"title\":\"THe Restaurant at the End of the universe\", \n\t\"description\":\"THe sequel to the Hitchhiker's guide to the galaxy\"\n\n}\n"
+				},
+				"url": {
+					"raw": "https://localhost:44373/api/books/author/f74d6899-9ed2-4137-9876-66b070553f8f",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "44373",
+					"path": [
+						"api",
+						"books",
+						"author",
+						"f74d6899-9ed2-4137-9876-66b070553f8f"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add Book For Author (Null Values)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"title\":null,\n\t\"description\":null\n\n}\n"
+				},
+				"url": {
+					"raw": "https://localhost:44373/api/books/author/f74d6899-9ed2-4137-9876-66b070553f8f",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "44373",
+					"path": [
+						"api",
+						"books",
+						"author",
+						"f74d6899-9ed2-4137-9876-66b070553f8f"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add Book For Author (Same Values)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"title\":\"DD\",\n\t\"description\":\"DD\"\n\n}\n"
+				},
+				"url": {
+					"raw": "https://localhost:44373/api/books/author/f74d6899-9ed2-4137-9876-66b070553f8f",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "44373",
+					"path": [
+						"api",
+						"books",
+						"author",
+						"f74d6899-9ed2-4137-9876-66b070553f8f"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Book For Author (Same Values)",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"title\":\"DD\",\n\t\"description\":\"DD\"\n\n}\n"
+				},
+				"url": {
+					"raw": "https://localhost:44373/api/books/29af5a52-9421-44e8-a2bb-a6b9ccbc8239/author/76053df4-6687-4353-8937-b45556748abe",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "44373",
+					"path": [
+						"api",
+						"books",
+						"29af5a52-9421-44e8-a2bb-a6b9ccbc8239",
+						"author",
+						"76053df4-6687-4353-8937-b45556748abe"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Book For Author (Large Values)",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"title\":\"a\",\n\t\"description\":\"Partially, but it also obeys your commands. Oh God, my uncle. How am I ever gonna explain this? I call it luck. I call it luck. You are a part of the Rebel Alliance and a traitor! Take her away! I suggest you try it again, Luke. This time, let go your conscious self and act on instinct.\n\nHokey religions and ancient weapons are no match for a good blaster at your side, kid. In my experience, there is no such thing as luck. Look, I ain't in this for your revolution, and I'm not in it for you, Princess. I expect to be well paid. I'm in it for the money.\n\nObi-Wan is here. The Force is with him. Hey, Luke! May the Force be with you. Oh God, my uncle. How am I ever gonna explain this? I care. So, what do you think of her, Han? Remember, a Jedi can feel the Force flowing through him.\n\nI don't know what you're talking about. I am a member of the Imperial Senate on a diplomatic mission to Alderaan-- I'm surprised you had the courage to take the responsibility yourself. Look, I can take you as far as Anchorhead. You can get a transport there to Mos Eisley or wherever you're going.\n\nIn my experience, there is no such thing as luck. As you wish. I suggest you try it again, Luke. This time, let go your conscious self and act on instinct. Still, she's got a lot of spirit. I don't know, what do you think?\n\nAlderaan? I'm not going to Alderaan. I've got to go home. It's late, I'm in for it as it is. I need your help, Luke. She needs your help. I'm getting too old for this sort of thing. Look, I can take you as far as Anchorhead. You can get a transport there to Mos Eisley or wherever you're going.\"\n\n}\n"
+				},
+				"url": {
+					"raw": "https://localhost:44373/api/books/29af5a52-9421-44e8-a2bb-a6b9ccbc8239/author/76053df4-6687-4353-8937-b45556748abe",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "44373",
+					"path": [
+						"api",
+						"books",
+						"29af5a52-9421-44e8-a2bb-a6b9ccbc8239",
+						"author",
+						"76053df4-6687-4353-8937-b45556748abe"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Book For Author (No Description)",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"title\":null,\n\t\"description\":null\n}\n"
+				},
+				"url": {
+					"raw": "https://localhost:44373/api/books/29af5a52-9421-44e8-a2bb-a6b9ccbc8239/author/76053df4-6687-4353-8937-b45556748abe",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "44373",
+					"path": [
+						"api",
+						"books",
+						"29af5a52-9421-44e8-a2bb-a6b9ccbc8239",
+						"author",
+						"76053df4-6687-4353-8937-b45556748abe"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Book For Author (Same Large Values==)",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"title\":\"Partially, but it also obeys your commands. Oh God, my uncle. How am I ever gonna explain this? I call it luck. I call it luck. You are a part of the Rebel Alliance and a traitor! Take her away! I suggest you try it again, Luke. This time, let go your conscious self and act on instinct.\n\nHokey religions and ancient weapons are no match for a good blaster at your side, kid. In my experience, there is no such thing as luck. Look, I ain't in this for your revolution, and I'm not in it for you, Princess. I expect to be well paid. I'm in it for the money.\n\nObi-Wan is here. The Force is with him. Hey, Luke! May the Force be with you. Oh God, my uncle. How am I ever gonna explain this? I care. So, what do you think of her, Han? Remember, a Jedi can feel the Force flowing through him.\n\nI don't know what you're talking about. I am a member of the Imperial Senate on a diplomatic mission to Alderaan-- I'm surprised you had the courage to take the responsibility yourself. Look, I can take you as far as Anchorhead. You can get a transport there to Mos Eisley or wherever you're going.\n\nIn my experience, there is no such thing as luck. As you wish. I suggest you try it again, Luke. This time, let go your conscious self and act on instinct. Still, she's got a lot of spirit. I don't know, what do you think?\n\nAlderaan? I'm not going to Alderaan. I've got to go home. It's late, I'm in for it as it is. I need your help, Luke. She needs your help. I'm getting too old for this sort of thing. Look, I can take you as far as Anchorhead. You can get a transport there to Mos Eisley or wherever you're going.\"\n,\n\t\"description\":\"Partially, but it also obeys your commands. Oh God, my uncle. How am I ever gonna explain this? I call it luck. I call it luck. You are a part of the Rebel Alliance and a traitor! Take her away! I suggest you try it again, Luke. This time, let go your conscious self and act on instinct.\n\nHokey religions and ancient weapons are no match for a good blaster at your side, kid. In my experience, there is no such thing as luck. Look, I ain't in this for your revolution, and I'm not in it for you, Princess. I expect to be well paid. I'm in it for the money.\n\nObi-Wan is here. The Force is with him. Hey, Luke! May the Force be with you. Oh God, my uncle. How am I ever gonna explain this? I care. So, what do you think of her, Han? Remember, a Jedi can feel the Force flowing through him.\n\nI don't know what you're talking about. I am a member of the Imperial Senate on a diplomatic mission to Alderaan-- I'm surprised you had the courage to take the responsibility yourself. Look, I can take you as far as Anchorhead. You can get a transport there to Mos Eisley or wherever you're going.\n\nIn my experience, there is no such thing as luck. As you wish. I suggest you try it again, Luke. This time, let go your conscious self and act on instinct. Still, she's got a lot of spirit. I don't know, what do you think?\n\nAlderaan? I'm not going to Alderaan. I've got to go home. It's late, I'm in for it as it is. I need your help, Luke. She needs your help. I'm getting too old for this sort of thing. Look, I can take you as far as Anchorhead. You can get a transport there to Mos Eisley or wherever you're going.\"\n\n}\n"
+				},
+				"url": {
+					"raw": "https://localhost:44373/api/books/29af5a52-9421-44e8-a2bb-a6b9ccbc8239/author/76053df4-6687-4353-8937-b45556748abe",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "44373",
+					"path": [
+						"api",
+						"books",
+						"29af5a52-9421-44e8-a2bb-a6b9ccbc8239",
+						"author",
+						"76053df4-6687-4353-8937-b45556748abe"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Upsert Book For Author",
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "[\n{\n \"op\" : \"replace\",\n \"path\" : \"/title\",\n \"value\" : \"A gmae of Thrones - Updated\"\n},\n{\n \"op\" : \"replace\",\n \"path\" : \"/description\",\n \"value\" : \"My New Description\"\n}\n]"
+				},
+				"url": {
+					"raw": "https://localhost:44373/api/books/211f5a52-9421-44e8-a2bb-a6b9ccbc8239/author/76053df4-6687-4353-8937-b45556748abe",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "44373",
+					"path": [
+						"api",
+						"books",
+						"211f5a52-9421-44e8-a2bb-a6b9ccbc8239",
+						"author",
+						"76053df4-6687-4353-8937-b45556748abe"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Upsert Book For Author (Invalid)",
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "[\n{\n \"op\" : \"add\",\n \"path\" : \"/title\",\n \"value\" : \"\"\n}\n,\n{\n \"op\" : \"add\",\n \"path\" : \"/description\",\n \"value\" : \"\"\n}\n]"
+				},
+				"url": {
+					"raw": "https://localhost:44373/api/books/200f5a52-9421-44e8-a2bb-a6b9ccbc8239/author/76053df4-6687-4353-8937-b45556748abe",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "44373",
+					"path": [
+						"api",
+						"books",
+						"200f5a52-9421-44e8-a2bb-a6b9ccbc8239",
+						"author",
+						"76053df4-6687-4353-8937-b45556748abe"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Upsert Book For Author (Invalid Attribute)",
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "[\n{\n \"op\" : \"add\",\n \"path\" : \"/title\",\n \"value\" : \"\"\n}\n,\n{\n \"op\" : \"add\",\n \"path\" : \"/dfadf\",\n \"value\" : \"\"\n}\n]"
+				},
+				"url": {
+					"raw": "https://localhost:44373/api/books/200f5a52-9421-44e8-a2bb-a6b9ccbc8239/author/76053df4-6687-4353-8937-b45556748abe",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "44373",
+					"path": [
+						"api",
+						"books",
+						"200f5a52-9421-44e8-a2bb-a6b9ccbc8239",
+						"author",
+						"76053df4-6687-4353-8937-b45556748abe"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add Book For Author (Large Description)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"title\":\"a\",\n\t\"description\":\"Partially, but it also obeys your commands. Oh God, my uncle. How am I ever gonna explain this? I call it luck. I call it luck. You are a part of the Rebel Alliance and a traitor! Take her away! I suggest you try it again, Luke. This time, let go your conscious self and act on instinct.\n\nHokey religions and ancient weapons are no match for a good blaster at your side, kid. In my experience, there is no such thing as luck. Look, I ain't in this for your revolution, and I'm not in it for you, Princess. I expect to be well paid. I'm in it for the money.\n\nObi-Wan is here. The Force is with him. Hey, Luke! May the Force be with you. Oh God, my uncle. How am I ever gonna explain this? I care. So, what do you think of her, Han? Remember, a Jedi can feel the Force flowing through him.\n\nI don't know what you're talking about. I am a member of the Imperial Senate on a diplomatic mission to Alderaan-- I'm surprised you had the courage to take the responsibility yourself. Look, I can take you as far as Anchorhead. You can get a transport there to Mos Eisley or wherever you're going.\n\nIn my experience, there is no such thing as luck. As you wish. I suggest you try it again, Luke. This time, let go your conscious self and act on instinct. Still, she's got a lot of spirit. I don't know, what do you think?\n\nAlderaan? I'm not going to Alderaan. I've got to go home. It's late, I'm in for it as it is. I need your help, Luke. She needs your help. I'm getting too old for this sort of thing. Look, I can take you as far as Anchorhead. You can get a transport there to Mos Eisley or wherever you're going.\"\n\n}\n"
+				},
+				"url": {
+					"raw": "https://localhost:44373/api/books/author/f74d6899-9ed2-4137-9876-66b070553f8f",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "44373",
+					"path": [
+						"api",
+						"books",
+						"author",
+						"f74d6899-9ed2-4137-9876-66b070553f8f"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add Book For Author (Large both ==)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"title\":\"Partially, but it also obeys your commands. Oh God, my uncle. How am I ever gonna explain this? I call it luck. I call it luck. You are a part of the Rebel Alliance and a traitor! Take her away! I suggest you try it again, Luke. This time, let go your conscious self and act on instinct.\n\nHokey religions and ancient weapons are no match for a good blaster at your side, kid. In my experience, there is no such thing as luck. Look, I ain't in this for your revolution, and I'm not in it for you, Princess. I expect to be well paid. I'm in it for the money.\n\nObi-Wan is here. The Force is with him. Hey, Luke! May the Force be with you. Oh God, my uncle. How am I ever gonna explain this? I care. So, what do you think of her, Han? Remember, a Jedi can feel the Force flowing through him.\n\nI don't know what you're talking about. I am a member of the Imperial Senate on a diplomatic mission to Alderaan-- I'm surprised you had the courage to take the responsibility yourself. Look, I can take you as far as Anchorhead. You can get a transport there to Mos Eisley or wherever you're going.\n\nIn my experience, there is no such thing as luck. As you wish. I suggest you try it again, Luke. This time, let go your conscious self and act on instinct. Still, she's got a lot of spirit. I don't know, what do you think?\n\nAlderaan? I'm not going to Alderaan. I've got to go home. It's late, I'm in for it as it is. I need your help, Luke. She needs your help. I'm getting too old for this sort of thing. Look, I can take you as far as Anchorhead. You can get a transport there to Mos Eisley or wherever you're going.\",\n\n\t\"description\":\"Partially, but it also obeys your commands. Oh God, my uncle. How am I ever gonna explain this? I call it luck. I call it luck. You are a part of the Rebel Alliance and a traitor! Take her away! I suggest you try it again, Luke. This time, let go your conscious self and act on instinct.\n\nHokey religions and ancient weapons are no match for a good blaster at your side, kid. In my experience, there is no such thing as luck. Look, I ain't in this for your revolution, and I'm not in it for you, Princess. I expect to be well paid. I'm in it for the money.\n\nObi-Wan is here. The Force is with him. Hey, Luke! May the Force be with you. Oh God, my uncle. How am I ever gonna explain this? I care. So, what do you think of her, Han? Remember, a Jedi can feel the Force flowing through him.\n\nI don't know what you're talking about. I am a member of the Imperial Senate on a diplomatic mission to Alderaan-- I'm surprised you had the courage to take the responsibility yourself. Look, I can take you as far as Anchorhead. You can get a transport there to Mos Eisley or wherever you're going.\n\nIn my experience, there is no such thing as luck. As you wish. I suggest you try it again, Luke. This time, let go your conscious self and act on instinct. Still, she's got a lot of spirit. I don't know, what do you think?\n\nAlderaan? I'm not going to Alderaan. I've got to go home. It's late, I'm in for it as it is. I need your help, Luke. She needs your help. I'm getting too old for this sort of thing. Look, I can take you as far as Anchorhead. You can get a transport there to Mos Eisley or wherever you're going.\"\n\n}\n"
+				},
+				"url": {
+					"raw": "https://localhost:44373/api/books/author/f74d6899-9ed2-4137-9876-66b070553f8f",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "44373",
+					"path": [
+						"api",
+						"books",
+						"author",
+						"f74d6899-9ed2-4137-9876-66b070553f8f"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New Author and List of Books",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"firstName\":\"James\",\n\t\"lastName\":\"Ellroy\",\n\t\"dateofBirth\": \"1948-03-04T00:00:00\",\n\t\"genre\" : \"Thriller\",\n\t\"books\" : \t\n\t[\n\t\t{\n\t\t\t\"title\":\"THe Restaurant at the End of the universe\", \n\t\t\t\"description\":\"THe sequel to the Hitchhiker's guide to the galaxy\"\n\t\t}\n\t]\n}\n"
+				},
+				"url": {
+					"raw": "https://localhost:44373/api/authors/",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "44373",
+					"path": [
+						"api",
+						"authors",
+						""
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

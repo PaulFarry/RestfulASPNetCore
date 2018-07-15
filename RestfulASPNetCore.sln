@@ -3,11 +3,12 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27703.2035
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RestfulASPNetCore.Web", "RestfulASPNetCore.Web\RestfulASPNetCore.Web.csproj", "{0B5FA04F-F715-46E1-BF1D-9BEB277BF749}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RestfulASPNetCore.Web", "RestfulASPNetCore.Web\RestfulASPNetCore.Web.csproj", "{0B5FA04F-F715-46E1-BF1D-9BEB277BF749}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{82085C22-9A6C-4419-B06B-805DE2993A84}"
 	ProjectSection(SolutionItems) = preProject
 		Readme.md = Readme.md
+		restfultraining_postman.json = restfultraining_postman.json
 		SamplePostAuthor.xml = SamplePostAuthor.xml
 	EndProjectSection
 EndProject
