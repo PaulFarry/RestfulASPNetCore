@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using AspNetCoreRateLimit;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Formatters;
@@ -13,6 +14,7 @@ using RestfulASPNetCore.Web.Dtos;
 using RestfulASPNetCore.Web.Entities;
 using RestfulASPNetCore.Web.Helpers;
 using RestfulASPNetCore.Web.Services;
+using System;
 using System.Linq;
 
 
@@ -88,6 +90,34 @@ namespace RestfulASPNetCore.Web
 
             services.AddResponseCaching();
 
+            services.AddMemoryCache();
+
+            services.Configure<IpRateLimitOptions>((options) =>
+            {
+                options.GeneralRules = new System.Collections.Generic.List<RateLimitRule>()
+                {
+                    new RateLimitRule
+                    {
+                        Endpoint = "*",
+                        Limit = 1000,
+                        Period = "5m"
+                        //PeriodTimespan = new TimeSpan(0,5,0)
+                    },
+                    new RateLimitRule
+                    {
+                        Endpoint = "*",
+                        Limit = 200,
+                        Period = "10s"
+                        //PeriodTimespan = new TimeSpan(0,0,10)
+                    }
+                };
+
+            });
+
+            services.AddSingleton<IRateLimitCounterStore, MemoryCacheRateLimitCounterStore>();
+            services.AddSingleton<IIpPolicyStore, MemoryCacheIpPolicyStore>();
+
+
 
         }
 
@@ -133,6 +163,8 @@ namespace RestfulASPNetCore.Web
             });
 
             libraryContext.EnsureSeedDataForContext();
+
+            app.UseIpRateLimiting();
 
             app.UseResponseCaching();
 
