@@ -149,6 +149,44 @@
 			"response": []
 		},
 		{
+			"name": "Authors Options",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "00d5cfef-a156-4aa5-88be-4eddc8f9f26f",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "OPTIONS",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json"
+					}
+				],
+				"body": {},
+				"url": {
+					"raw": "https://localhost:44373/api/authors",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "44373",
+					"path": [
+						"api",
+						"authors"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Authors Hateoas",
 			"request": {
 				"method": "GET",

@@ -278,5 +278,12 @@ namespace RestfulASPNetCore.Web.Controllers
 
             return NoContent();
         }
+
+        [HttpOptions]
+        public IActionResult GetAuthorOptions()
+        {
+            Response.Headers.Add(HeaderNames.Allow, "GET, OPTIONS, POST");
+            return Ok();
+        }
     }
 }
