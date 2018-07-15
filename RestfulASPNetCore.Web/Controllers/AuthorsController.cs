@@ -149,6 +149,7 @@ namespace RestfulASPNetCore.Web.Controllers
         }
 
         [HttpGet("{id}", Name = nameof(GetAuthor))]
+        [HttpHead]
         public IActionResult GetAuthor(Guid id, [FromQuery] string fields, [FromHeader(Name = HeaderNames.Accept)] string mediaType)
         {
             if (!_typeHelperService.TypeHasProperties<Author>(fields))
