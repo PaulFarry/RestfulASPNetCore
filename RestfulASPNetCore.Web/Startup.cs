@@ -62,7 +62,7 @@ namespace RestfulASPNetCore.Web
             .AddJsonOptions(options =>
                 options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver()
             )
-            .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             var connectionString = Configuration["connectionStrings:libraryDBConnectionString"];
             services.AddDbContext<LibraryContext>(o => o.UseSqlServer(connectionString));
             services.AddScoped<ILibraryRepository, LibraryRepository>();
@@ -122,10 +122,8 @@ namespace RestfulASPNetCore.Web
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, LibraryContext libraryContext, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, LibraryContext libraryContext)
         {
-            loggerFactory.AddConsole();
-            loggerFactory.AddDebug(LogLevel.Trace);
 
             //.Net core 1.1 approach
             //loggerFactory.AddProvider(new NLog.Extensions.Logging.NLogLoggerProvider());

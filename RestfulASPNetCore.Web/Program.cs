@@ -1,7 +1,11 @@
 ﻿using Microsoft.AspNetCore;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using NLog.Web;
+
+
 
 namespace RestfulASPNetCore.Web
 {
@@ -14,8 +18,11 @@ namespace RestfulASPNetCore.Web
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
-            .UseKestrel()
-            .ConfigureAppConfiguration(
+             .ConfigureKestrel((context, options) =>
+             {
+                 // Set properties and call methods on options
+             })
+             .ConfigureAppConfiguration(
                 (hostingContext, config) =>
                 {
                     var env = hostingContext.HostingEnvironment;
@@ -25,6 +32,10 @@ namespace RestfulASPNetCore.Web
                     config.AddEnvironmentVariables();
                 }
             )
+               .ConfigureLogging((hostingContext, logging) =>
+               {
+                   logging.AddConsole();
+               })
             .UseNLog()
             .UseStartup<Startup>();
     }
