@@ -68,7 +68,7 @@ namespace RestfulASPNetCore.Web.Controllers
 
         [HttpGet("{id}/author/{authorid}", Name = nameof(GetBookForAuthor))]
         public IActionResult GetBookForAuthor(Guid authorId, Guid id,
-            [FromHeader(Name = HeaderNames.Accept)] string mediaType)
+            [FromHeader(Name = Headers.Accept)] string mediaType)
         {
             if (!_libraryRepository.AuthorExists(authorId))
             {
@@ -95,7 +95,7 @@ namespace RestfulASPNetCore.Web.Controllers
 
         [HttpPost("author/{authorid}", Name = nameof(CreateBookForAuthor))]
         public IActionResult CreateBookForAuthor(Guid authorId, [FromBody] CreateBook book,
-            [FromHeader(Name = HeaderNames.Accept)] string mediaType)
+            [FromHeader(Name = Headers.Accept)] string mediaType)
         {
             if (book == null)
             {

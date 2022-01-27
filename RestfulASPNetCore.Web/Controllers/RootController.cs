@@ -20,7 +20,7 @@ namespace RestfulASPNetCore.Web.Controllers
 
 
         [HttpGet(Name = nameof(GetRoot))]
-        public IActionResult GetRoot([FromHeader(Name = HeaderNames.Accept)] string mediaType)
+        public IActionResult GetRoot([FromHeader(Name = Headers.Accept)] string mediaType)
         {
             var currentMediaType = new MediaType(mediaType);
             var includeLinks = currentMediaType.IsSubsetOf(VendorMediaType.HateoasLinksMediaType);

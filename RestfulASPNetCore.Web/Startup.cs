@@ -1,6 +1,7 @@
 ﻿using AspNetCoreRateLimit;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
@@ -8,13 +9,12 @@ using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json.Serialization;
 using RestfulASPNetCore.Web.Dtos;
 using RestfulASPNetCore.Web.Entities;
 using RestfulASPNetCore.Web.Helpers;
 using RestfulASPNetCore.Web.Services;
-using System;
 using System.Linq;
 
 
@@ -43,14 +43,14 @@ namespace RestfulASPNetCore.Web
 
                     setup.InputFormatters.Add(xmlInputFormatter);
 
-                    var jsonOutputFormatter = setup.OutputFormatters.OfType<JsonOutputFormatter>().FirstOrDefault();
+                    var jsonOutputFormatter = setup.OutputFormatters.OfType<NewtonsoftJsonOutputFormatter>().FirstOrDefault();
                     if (jsonOutputFormatter != null)
                     {
                         jsonOutputFormatter.SupportedMediaTypes.Add(VendorMediaType.HateoasLinks);
                     }
 
 
-                    var jsonInputFormatter = setup.InputFormatters.OfType<JsonInputFormatter>().FirstOrDefault();
+                    var jsonInputFormatter = setup.InputFormatters.OfType<NewtonsoftJsonInputFormatter>().FirstOrDefault();
                     if (jsonInputFormatter != null)
                     {
                         jsonInputFormatter.SupportedMediaTypes.Add(VendorMediaType.NewAuthor);
@@ -58,11 +58,15 @@ namespace RestfulASPNetCore.Web
                     }
                     //setup.InputFormatters.Add(new XmlDataContractSerializerInputFormatter());
                 }
-            )
-            .AddJsonOptions(options =>
+            ).AddNewtonsoftJson(options =>
                 options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver()
             )
-            .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
+
+            services.AddControllersWithViews(options =>
+            {
+                options.InputFormatters.Insert(0, GetJsonPatchInputFormatter());
+            });
             var connectionString = Configuration["connectionStrings:libraryDBConnectionString"];
             services.AddDbContext<LibraryContext>(o => o.UseSqlServer(connectionString));
             services.AddScoped<ILibraryRepository, LibraryRepository>();
@@ -91,6 +95,14 @@ namespace RestfulASPNetCore.Web
             services.AddResponseCaching();
 
             services.AddMemoryCache();
+
+            services.AddSingleton<IProcessingStrategy, AsyncKeyLockProcessingStrategy>();
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
+
+            services.AddMemoryCache();
+            services.AddSingleton<IClientPolicyStore, MemoryCacheClientPolicyStore>();
+            services.AddSingleton<IRateLimitCounterStore, MemoryCacheRateLimitCounterStore>();
 
             services.Configure<IpRateLimitOptions>((options) =>
             {
@@ -121,8 +133,24 @@ namespace RestfulASPNetCore.Web
 
         }
 
+
+        private static NewtonsoftJsonPatchInputFormatter GetJsonPatchInputFormatter()
+        {
+            var builder = new ServiceCollection()
+                .AddLogging()
+                .AddMvc()
+                .AddNewtonsoftJson()
+                .Services.BuildServiceProvider();
+
+            return builder
+                .GetRequiredService<IOptions<MvcOptions>>()
+                .Value
+                .InputFormatters
+                .OfType<NewtonsoftJsonPatchInputFormatter>()
+                .First();
+        }
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, LibraryContext libraryContext)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, LibraryContext libraryContext)
         {
 
             //.Net core 1.1 approach
@@ -130,7 +158,7 @@ namespace RestfulASPNetCore.Web
             //loggerFactory.AddNLog();
 
 
-            if (env.IsDevelopment())
+            if (env.EnvironmentName.Equals("development", System.StringComparison.OrdinalIgnoreCase))
             {
                 app.UseDeveloperExceptionPage();
             }
@@ -160,6 +188,9 @@ namespace RestfulASPNetCore.Web
 
             });
 
+            app.UseStaticFiles();
+            app.UseRouting();
+            app.UseCors();
             libraryContext.EnsureSeedDataForContext();
 
             app.UseIpRateLimiting();
@@ -168,8 +199,10 @@ namespace RestfulASPNetCore.Web
 
             app.UseHttpCacheHeaders();
 
-
-            app.UseMvc();
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}");
+            });
         }
     }
 }

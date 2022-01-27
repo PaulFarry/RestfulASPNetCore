@@ -29,8 +29,8 @@ namespace RestfulASPNetCore.Web.Controllers
         }
 
         [HttpGet(Name = nameof(GetAuthors))]
-        public IActionResult GetAuthors([FromQuery]AuthorsResourceParameters parameters,
-            [FromHeader(Name = HeaderNames.Accept)] string mediaType)
+        public IActionResult GetAuthors([FromQuery] AuthorsResourceParameters parameters,
+            [FromHeader(Name = Headers.Accept)] string mediaType)
         {
 
             if (!_propertyMappingService.ValidMappingExistsFor<Author, Entities.Author>(parameters.OrderBy))
@@ -150,7 +150,7 @@ namespace RestfulASPNetCore.Web.Controllers
 
         [HttpGet("{id}", Name = nameof(GetAuthor))]
         [HttpHead]
-        public IActionResult GetAuthor(Guid id, [FromQuery] string fields, [FromHeader(Name = HeaderNames.Accept)] string mediaType)
+        public IActionResult GetAuthor(Guid id, [FromQuery] string fields, [FromHeader(Name = Headers.Accept)] string mediaType)
         {
             if (!_typeHelperService.TypeHasProperties<Author>(fields))
             {
@@ -181,13 +181,13 @@ namespace RestfulASPNetCore.Web.Controllers
 
         }
         [HttpPost(Name = nameof(CreateDeadAuthor))]
-        [RequestHeaderMatchesMediaType(HeaderNames.ContentType,
+        [RequestHeaderMatchesMediaType(Headers.ContentType,
             new[] { VendorMediaType.NewAuthorDead,
                     VendorMediaType.NewAuthorDeadXml })]
         //Additional Constraints ...
         //[RequestHeaderMatchesMediaType(HeaderNames.Accept, new[] { "dsawdfdsf" })]
 
-        public IActionResult CreateDeadAuthor([FromBody]CreateDeadAuthor author, [FromHeader(Name = HeaderNames.Accept)] string mediaType)
+        public IActionResult CreateDeadAuthor([FromBody] CreateDeadAuthor author, [FromHeader(Name = Headers.Accept)] string mediaType)
         {
             if (author == null)
             {
@@ -219,8 +219,8 @@ namespace RestfulASPNetCore.Web.Controllers
         }
 
         [HttpPost(Name = nameof(CreateAuthor))]
-        [RequestHeaderMatchesMediaType(HeaderNames.ContentType, new[] { VendorMediaType.NewAuthor })]
-        public IActionResult CreateAuthor([FromBody]CreateAuthor author, [FromHeader(Name = HeaderNames.Accept)] string mediaType)
+        [RequestHeaderMatchesMediaType(Headers.ContentType, new[] { VendorMediaType.NewAuthor })]
+        public IActionResult CreateAuthor([FromBody] CreateAuthor author, [FromHeader(Name = Headers.Accept)] string mediaType)
         {
             if (author == null)
             {
